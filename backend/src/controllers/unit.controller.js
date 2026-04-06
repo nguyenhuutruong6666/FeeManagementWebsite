@@ -33,3 +33,27 @@ export const getUnitBrands = async (req, res) => {
         return sendError(res, err.message);
     }
 };
+
+export const createUnitBrand = async (req, res) => {
+    try {
+        const { unitTitle, brandId, parentUnitId } = req.body;
+        if (!unitTitle || !brandId) return sendError(res, 'Thiếu thông tin bắt buộc', 400);
+
+        // 1. Create Unit first
+        const unit = await prisma.unit.create({ data: { title: unitTitle } });
+        
+        // 2. Create UnitBrand
+        const ub = await prisma.unitBrand.create({
+            data: {
+                unitId: unit.id,
+                brandId: parseInt(brandId),
+                parentUnitId: parentUnitId ? parseInt(parentUnitId) : null
+            },
+            include: { unit: true, brand: true }
+        });
+        
+        return sendSuccess(res, ub, 'Tạo tổ chức thành công');
+    } catch(err) {
+        return sendError(res, err.message);
+    }
+};

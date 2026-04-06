@@ -1,14 +1,35 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../../services/api';
 
 const AddPolicy = () => {
     const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({
+        policyName: '',
+        cycle: 'HK1/2024',
+        dueDate: '',
+        standardAmount: ''
+    });
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await api.post('/fee-policies', formData);
+            if (res.success) {
+                alert('Tạo chính sách thành công!');
+                navigate('/policysettings');
+            }
+        } catch(error) {
+            alert(error.message || 'Lỗi');
+        }
+    };
 
     return (
         <div className="container">
             <h2>Thiết lập chính sách đoàn phí</h2>
             <div style={{background: 'white', padding: '25px', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', maxWidth: '600px', margin: '0 auto'}}>
-                <form onSubmit={(e) => { e.preventDefault(); navigate('/policysettings'); }}>
+                <form onSubmit={handleSubmit}>
                     <div style={{marginBottom: '15px'}}>
                         <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Tên chính sách:</label>
                         <input type="text" required placeholder="VD: Đoàn phí năm học 2024-2025" style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}} />

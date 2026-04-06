@@ -1,25 +1,47 @@
 import { useState, useEffect } from 'react';
 import useAuthStore from '../../store/authStore';
 import { Link } from 'react-router-dom';
+import api from '../../services/api';
 import './Units.scss';
 
-// Note: In a real implementation this would fetch from /api/units tree
 const Units = () => {
     const { user } = useAuthStore();
     const [units, setUnits] = useState([]);
 
     useEffect(() => {
-        // Mock data structure representing units matching the backend payload
-        setUnits([
-            {
-                ub_id: 1, unit_id: 1, unit_title: 'ĐH Sư phạm', brand: 'Trường',
-                children: [
-                    { ub_id: 2, unit_id: 2, unit_title: 'CNTT', brand: 'Khoa', children: [
-                        { ub_id: 3, unit_id: 3, unit_title: 'K72E1', brand: 'Chi đoàn' }
-                    ]}
-                ]
+        const fetchTree = async () => {
+            try {
+                const res = await api.get('/units/brands');
+                if (res.success) {
+                    const data = res.data.map(item => ({
+                        ...item,
+                        ub_id: item.id,
+                        unit_title: item.unit?.title || '',
+                        brand: item.brand?.title || '',
+                        children: []
+                    }));
+                    
+                    const map = {};
+                    data.forEach(node => { map[node.id] = node; });
+                    
+                    const roots = [];
+                    data.forEach(node => {
+                        if (node.parentUnitId) {
+                            if (map[node.parentUnitId]) {
+                                map[node.parentUnitId].children.push(node);
+                            }
+                        } else {
+                            roots.push(node);
+                        }
+                    });
+                    
+                    setUnits(roots);
+                }
+            } catch(e) {
+                console.error(e);
             }
-        ]);
+        };
+        fetchTree();
     }, []);
 
     const iconBrand = (brand) => {

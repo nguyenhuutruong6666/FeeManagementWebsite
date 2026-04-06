@@ -25,6 +25,19 @@ const Users = () => {
         }
     };
 
+    const handleDelete = async (id, name) => {
+        if (!window.confirm(`Bạn có chắc chắn muốn xóa người dùng: ${name}?`)) return;
+        try {
+            const res = await userService.delete(id);
+            if (res.success) {
+                alert('Đã xóa người dùng thành công.');
+                fetchUsers();
+            }
+        } catch (error) {
+            alert(error.message || 'Lỗi khi xóa người dùng.');
+        }
+    };
+
     return (
         <div className="container">
             <h2>Quản lý người dùng</h2>
@@ -74,7 +87,7 @@ const Users = () => {
                                     <td className="actions-cell">
                                         <Link to={`/users/edit/${row.userId}`} className="btn-edit" title="Sửa">Sửa</Link>
                                         {row.isAdmin !== 1 && (
-                                            <a href="#" className="btn-delete" title="Xóa" onClick={(e) => { e.preventDefault(); alert('Đã hủy tài khoản mock'); }}>Xóa</a>
+                                            <button className="btn-delete" title="Xóa" onClick={() => handleDelete(row.userId, row.fullName)}>Xóa</button>
                                         )}
                                     </td>
                                 </tr>

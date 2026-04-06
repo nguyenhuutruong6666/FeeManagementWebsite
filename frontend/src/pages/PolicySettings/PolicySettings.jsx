@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import useAuthStore from '../../store/authStore';
 import { Link } from 'react-router-dom';
-import api from '../../services/api';
+import { policyService } from '../../services/policyService';
 import { formatDate } from '../../utils/formatters';
 import './PolicySettings.scss';
 
@@ -16,7 +16,7 @@ const PolicySettings = () => {
 
     const fetchPolicies = async () => {
         try {
-            const res = await api.get('/fee-policy');
+            const res = await policyService.getAll();
             if (res.success) {
                 setPolicies(res.data);
             }

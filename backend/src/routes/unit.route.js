@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUnits, createUnit, getUnitBrands } from '../controllers/unit.controller.js';
+import { getAllUnits, createUnit, getUnitBrands, createUnitBrand } from '../controllers/unit.controller.js';
 import { authenticate } from '../middlewares/auth.middleware.js';
 import { requireAdmin } from '../middlewares/role.middleware.js';
 
@@ -12,5 +12,7 @@ router.get('/brands', getUnitBrands);
 router.use(requireAdmin);
 router.get('/', getAllUnits);
 router.post('/', createUnit);
+
+router.post('/brands', createUnitBrand);
 
 export default router;
