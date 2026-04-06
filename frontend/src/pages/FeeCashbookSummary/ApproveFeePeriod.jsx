@@ -20,7 +20,7 @@ const ApproveFeePeriod = () => {
                     </div>
                 </div>
                 <div style={{textAlign: 'right'}}>
-                    <Link to="/fee-cashbook-summary" style={{padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'none'}}>Quay về Sổ quỹ</Link>
+                    <Link to="/feecashbooksummary" style={{padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'none'}}>Quay về Sổ quỹ</Link>
                 </div>
             </div>
         </div>

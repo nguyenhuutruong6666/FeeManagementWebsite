@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import useAuthStore from './store/authStore';
+import { useEffect } from 'react';
 import Layout from './components/Layout/Layout';
 
 // Pages
@@ -34,6 +35,38 @@ import ActivityProposal from './pages/ActivityManagement/ActivityProposal';
 import ActivityApproval from './pages/ActivityManagement/ActivityApproval';
 import Disbursement from './pages/ActivityManagement/Disbursement';
 
+const TitleUpdater = () => {
+    const location = useLocation();
+    
+    useEffect(() => {
+        const path = location.pathname;
+        let title = 'Hệ thống Quản lý Đoàn phí';
+        
+        if (path === '/') title = 'Trang chủ';
+        else if (path.includes('/login')) title = 'Đăng nhập';
+        else if (path.includes('/forgotpassword')) title = 'Quên mật khẩu';
+        else if (path.includes('/profile')) title = 'Hồ sơ cá nhân';
+        else if (path.includes('/users')) title = 'Quản lý người dùng';
+        else if (path.includes('/members')) title = 'Quản lý đoàn viên';
+        else if (path.includes('/units')) title = 'Cấu hình tổ chức';
+        else if (path.includes('/policysettings')) title = 'Chính sách đoàn phí';
+        else if (path.includes('/payfee')) title = 'Nộp đoàn phí';
+        else if (path.includes('/managetransactions')) title = 'Giao dịch liên ngân hàng';
+        else if (path.includes('/feecashbooksummary')) title = 'Quản lý sổ quỹ';
+        else if (path.includes('/activitymanagement')) title = 'Quản lý hoạt động';
+        else if (path.includes('/reportsummary')) title = 'Thống kê báo cáo';
+        else if (path.includes('/generatefeeobligation')) title = 'Sinh nghĩa vụ';
+        
+        if (title !== 'Hệ thống Quản lý Đoàn phí') {
+            document.title = `${title} | Quản lý Đoàn phí`;
+        } else {
+            document.title = title;
+        }
+    }, [location]);
+    
+    return null;
+};
+
 const ProtectedRoute = ({ children, requiredRoles }) => {
   const { isAuthenticated, user } = useAuthStore();
   
@@ -67,33 +100,33 @@ function App() {
         
         {/* Available to all logged in */}
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/profile/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
+        <Route path="/profile/changepassword" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
         
         {/* Real routed components */}
         <Route path="/units" element={<ProtectedRoute requiredRoles={[]}><Units /></ProtectedRoute>} />
         <Route path="/units/add" element={<ProtectedRoute requiredRoles={[]}><AddUnit /></ProtectedRoute>} />
         <Route path="/units/edit/:id" element={<ProtectedRoute requiredRoles={[]}><EditUnit /></ProtectedRoute>} />
         
-        <Route path="/policy-settings" element={<ProtectedRoute requiredRoles={[]}><PolicySettings /></ProtectedRoute>} />
-        <Route path="/policy-settings/add" element={<ProtectedRoute requiredRoles={[]}><AddPolicy /></ProtectedRoute>} />
+        <Route path="/policysettings" element={<ProtectedRoute requiredRoles={[]}><PolicySettings /></ProtectedRoute>} />
+        <Route path="/policysettings/add" element={<ProtectedRoute requiredRoles={[]}><AddPolicy /></ProtectedRoute>} />
         
-        <Route path="/pay-fee" element={<ProtectedRoute><PayFee /></ProtectedRoute>} />
-        <Route path="/pay-fee/confirm" element={<ProtectedRoute><ConfirmCashPayment /></ProtectedRoute>} />
-        <Route path="/pay-fee/remind" element={<ProtectedRoute><RemindDebtors /></ProtectedRoute>} />
+        <Route path="/payfee" element={<ProtectedRoute><PayFee /></ProtectedRoute>} />
+        <Route path="/payfee/confirm" element={<ProtectedRoute><ConfirmCashPayment /></ProtectedRoute>} />
+        <Route path="/payfee/remind" element={<ProtectedRoute><RemindDebtors /></ProtectedRoute>} />
         
-        <Route path="/manage-transactions" element={<ProtectedRoute><ManageTransactions /></ProtectedRoute>} />
+        <Route path="/managetransactions" element={<ProtectedRoute><ManageTransactions /></ProtectedRoute>} />
         
-        <Route path="/fee-cashbook-summary" element={<ProtectedRoute><FeeCashbookSummary /></ProtectedRoute>} />
-        <Route path="/fee-cashbook-summary/transfer" element={<ProtectedRoute><AllocateTransfer /></ProtectedRoute>} />
-        <Route path="/fee-cashbook-summary/approve" element={<ProtectedRoute><ApproveFeePeriod /></ProtectedRoute>} />
+        <Route path="/feecashbooksummary" element={<ProtectedRoute><FeeCashbookSummary /></ProtectedRoute>} />
+        <Route path="/feecashbooksummary/transfer" element={<ProtectedRoute><AllocateTransfer /></ProtectedRoute>} />
+        <Route path="/feecashbooksummary/approve" element={<ProtectedRoute><ApproveFeePeriod /></ProtectedRoute>} />
         
-        <Route path="/activity-management" element={<ProtectedRoute><ActivityManagement /></ProtectedRoute>} />
-        <Route path="/activity-management/proposal" element={<ProtectedRoute><ActivityProposal /></ProtectedRoute>} />
-        <Route path="/activity-management/approval" element={<ProtectedRoute><ActivityApproval /></ProtectedRoute>} />
-        <Route path="/activity-management/disbursement" element={<ProtectedRoute><Disbursement /></ProtectedRoute>} />
+        <Route path="/activitymanagement" element={<ProtectedRoute><ActivityManagement /></ProtectedRoute>} />
+        <Route path="/activitymanagement/proposal" element={<ProtectedRoute><ActivityProposal /></ProtectedRoute>} />
+        <Route path="/activitymanagement/approval" element={<ProtectedRoute><ActivityApproval /></ProtectedRoute>} />
+        <Route path="/activitymanagement/disbursement" element={<ProtectedRoute><Disbursement /></ProtectedRoute>} />
         
-        <Route path="/report-summary" element={<ProtectedRoute><ReportSummary /></ProtectedRoute>} />
-        <Route path="/generate-fee-obligation" element={<ProtectedRoute requiredRoles={[]}><GenerateFeeObligation /></ProtectedRoute>} />
+        <Route path="/reportsummary" element={<ProtectedRoute><ReportSummary /></ProtectedRoute>} />
+        <Route path="/generatefeeobligation" element={<ProtectedRoute requiredRoles={[]}><GenerateFeeObligation /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

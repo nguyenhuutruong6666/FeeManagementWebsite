@@ -7,7 +7,7 @@ const Header = () => {
         <header className="header">
             <div className="header-left">
                 <div>
-                    <img src="/logo.png" alt="logo" /> {/* Adjust path as needed */}
+                    <img src="/hnue.png" alt="logo" /> {/* Adjust path as needed */}
                 </div>
                 <h2>HỆ THỐNG QUẢN LÝ ĐOÀN PHÍ</h2>
             </div>

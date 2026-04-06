@@ -18,9 +18,9 @@ const FeeCashbookSummary = () => {
             <h2>Quản lý Sổ quỹ đoàn phí</h2>
             
             <div className="action-buttons" style={{marginBottom: '20px', display: 'flex', gap: '10px'}}>
-                <Link to="/fee-cashbook-summary/approve" className="btn btn-approve" style={{background: '#0984e3'}}>Phê duyệt kỳ thu phí</Link>
+                <Link to="/feecashbooksummary/approve" className="btn btn-approve" style={{background: '#0984e3'}}>Phê duyệt kỳ thu phí</Link>
                 {['BCH Chi đoàn', 'BCH Khoa'].includes(user_role) && (
-                    <Link to="/fee-cashbook-summary/transfer" className="btn btn-transfer" style={{background: '#27ae60'}}>Phân bổ & Chuyển nộp</Link>
+                    <Link to="/feecashbooksummary/transfer" className="btn btn-transfer" style={{background: '#27ae60'}}>Phân bổ & Chuyển nộp</Link>
                 )}
             </div>
 

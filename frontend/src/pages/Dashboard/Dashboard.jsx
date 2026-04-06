@@ -17,7 +17,7 @@ const Dashboard = () => {
                         <div className="card-icon">💸</div>
                         <h3>Nộp đoàn phí</h3>
                         <p>Tra cứu và thanh toán nghĩa vụ đoàn phí của bạn.</p>
-                        <Link to="/pay-fee" className="btn-action">Đi tới nộp phí</Link>
+                        <Link to="/payfee" className="btn-action">Đi tới nộp phí</Link>
                     </div>
                 )}
 
@@ -26,7 +26,7 @@ const Dashboard = () => {
                         <div className="card-icon">📊</div>
                         <h3>Thống kê báo cáo</h3>
                         <p>Xem tổng quan thu chi và nợ phí của chi đoàn.</p>
-                        <Link to="/report-summary" className="btn-action">Xem thống kê</Link>
+                        <Link to="/reportsummary" className="btn-action">Xem thống kê</Link>
                     </div>
                 )}
 
@@ -36,19 +36,19 @@ const Dashboard = () => {
                             <div className="card-icon">💳</div>
                             <h3>Giao dịch liên ngân hàng</h3>
                             <p>Đối soát giao dịch, cập nhật trạng thái thu.</p>
-                            <Link to="/manage-transactions" className="btn-action">Xem giao dịch</Link>
+                            <Link to="/managetransactions" className="btn-action">Xem giao dịch</Link>
                         </div>
                         <div className="dashboard-card">
                             <div className="card-icon">⚙️</div>
                             <h3>Chính sách hệ thống</h3>
                             <p>Quản lý kỳ thu, mức phí và luật giảm trừ.</p>
-                            <Link to="/policy-settings" className="btn-action">Thiết lập chính sách</Link>
+                            <Link to="/policysettings" className="btn-action">Thiết lập chính sách</Link>
                         </div>
                         <div className="dashboard-card">
                             <div className="card-icon">📝</div>
                             <h3>Nghĩa vụ đoàn phí</h3>
                             <p>Tạo bảng thu phí và phát lệnh nộp phí tự động.</p>
-                            <Link to="/generate-fee-obligation" className="btn-action">Sinh nghĩa vụ</Link>
+                            <Link to="/generatefeeobligation" className="btn-action">Sinh nghĩa vụ</Link>
                         </div>
                     </>
                 )}

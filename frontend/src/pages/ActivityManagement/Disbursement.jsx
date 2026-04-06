@@ -8,7 +8,7 @@ const Disbursement = () => {
         <div className="container">
             <h2>Xuất phiếu chi (Giải ngân)</h2>
             <div style={{background: 'white', padding: '25px', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', maxWidth: '600px', margin: '0 auto'}}>
-                <form onSubmit={(e) => { e.preventDefault(); alert('Lưu phiếu chi thành công!'); navigate('/activity-management'); }}>
+                <form onSubmit={(e) => { e.preventDefault(); alert('Lưu phiếu chi thành công!'); navigate('/activitymanagement'); }}>
                     <div style={{marginBottom: '15px'}}>
                         <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Hoạt động (đã duyệt):</label>
                         <select required style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}}>
@@ -30,7 +30,7 @@ const Disbursement = () => {
                     </div>
                     <div>
                         <button type="submit" style={{padding: '10px 20px', background: '#00b894', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', marginRight: '10px'}}>Xuất phiếu chi</button>
-                        <Link to="/activity-management" style={{padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'none'}}>Hủy</Link>
+                        <Link to="/activitymanagement" style={{padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'none'}}>Hủy</Link>
                     </div>
                 </form>
             </div>

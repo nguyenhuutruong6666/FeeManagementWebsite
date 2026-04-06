@@ -12,7 +12,7 @@ const AllocateTransfer = () => {
                     <p style={{margin: '0 0 10px 0'}}><b>Tổng quỹ hiện có:</b> 2.450.000đ</p>
                     <p style={{margin: 0}}><b>Tỷ lệ giữ lại:</b> 60% (1.470.000đ)</p>
                 </div>
-                <form onSubmit={(e) => { e.preventDefault(); alert('Chuyển nộp mock'); navigate('/fee-cashbook-summary'); }}>
+                <form onSubmit={(e) => { e.preventDefault(); alert('Chuyển nộp mock'); navigate('/feecashbooksummary'); }}>
                     <div style={{marginBottom: '15px'}}>
                         <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Số tiền chuyển nộp lên cấp trên (40%):</label>
                         <input type="number" defaultValue="980000" disabled style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px', background: '#e9ecef'}} />
@@ -23,7 +23,7 @@ const AllocateTransfer = () => {
                     </div>
                     <div>
                         <button type="submit" style={{padding: '10px 20px', background: '#27ae60', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', marginRight: '10px'}}>Xác nhận chuyển nộp</button>
-                        <Link to="/fee-cashbook-summary" style={{padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'none'}}>Quay lại</Link>
+                        <Link to="/feecashbooksummary" style={{padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'none'}}>Quay lại</Link>
                     </div>
                 </form>
             </div>

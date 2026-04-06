@@ -1,21 +1,64 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import './Login.scss';
 
 const ForgotPassword = () => {
+    const [email, setEmail] = useState('');
+    const [submitted, setSubmitted] = useState(false);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Giả lập call API 
+        setSubmitted(true);
+    };
+
     return (
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f4f6f9'}}>
-            <div style={{background: 'white', padding: '30px', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', width: '100%', maxWidth: '400px'}}>
-                <h2 style={{textAlign: 'center', marginBottom: '20px', color: '#2d3436'}}>Quên mật khẩu</h2>
-                <form onSubmit={(e) => { e.preventDefault(); alert('Vui lòng kiểm tra email của bạn!'); }}>
-                    <div style={{marginBottom: '15px'}}>
-                        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Email của bạn:</label>
-                        <input type="email" required style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}} />
+        <div className="login-page">
+            <div className="login-card">
+                <div className="brand">
+                    <div style={{
+                        width: '60px', height: '60px', margin: '0 auto 15px', 
+                        background: 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
+                        borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: '#0284c7'
+                    }}>
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                     </div>
-                    <button type="submit" style={{width: '100%', padding: '10px', background: '#0984e3', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer'}}>Gửi liên kết đặt lại mật khẩu</button>
-                    <div style={{textAlign: 'center', marginTop: '15px'}}>
-                        <Link to="/login" style={{color: '#0984e3', textDecoration: 'none'}}>Quay lại đăng nhập</Link>
+                    <h2>Khôi phục mật khẩu</h2>
+                    <p>Nhập email của ban để nhận mã lấy lại mật khẩu</p>
+                </div>
+                
+                {!submitted ? (
+                    <form className="auth-form" onSubmit={handleSubmit}>
+                        <div className="input-wrapper">
+                            <input 
+                                type="email" 
+                                placeholder="Địa chỉ Email đã đăng ký..." 
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required 
+                            />
+                            <span className="input-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            </span>
+                        </div>
+                        
+                        <button type="submit" className="btn-submit">
+                            GỬI LIÊN KẾT ĐẶT LẠI
+                        </button>
+                    </form>
+                ) : (
+                    <div className="success" style={{textAlign: 'center', marginTop: '20px'}}>
+                        <p style={{margin: '0 0 10px 0'}}>✅ <b>Đã gửi thành công!</b></p>
+                        <p style={{fontSize: '0.9rem', color: '#64748b', margin: 0}}>
+                            Vui lòng kiểm tra hộp thư email <b>{email}</b> của bạn và làm theo hướng dẫn.
+                        </p>
                     </div>
-                </form>
+                )}
+                
+                <div className="auth-footer">
+                    Nhớ ra mật khẩu rồi? <Link to="/login">Trở về Đăng nhập</Link>
+                </div>
             </div>
         </div>
     );

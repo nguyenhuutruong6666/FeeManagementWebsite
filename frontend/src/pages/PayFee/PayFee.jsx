@@ -30,8 +30,8 @@ const PayFee = () => {
             
             {['BCH Chi đoàn'].includes(user_role) || user?.isAdmin === 1 ? (
                 <div style={{textAlign: 'right', marginBottom: '15px'}}>
-                    <Link to="/pay-fee/confirm" className="btn-manage" style={{marginRight: '10px'}}>Trang xác nhận tiền mặt (BCH)</Link>
-                    <Link to="/pay-fee/remind" className="btn-remind">Nhắc nợ đoàn viên</Link>
+                    <Link to="/payfee/confirm" className="btn-manage" style={{marginRight: '10px'}}>Trang xác nhận tiền mặt (BCH)</Link>
+                    <Link to="/payfee/remind" className="btn-remind">Nhắc nợ đoàn viên</Link>
                 </div>
             ) : null}
 

@@ -32,7 +32,7 @@ const RemindDebtors = () => {
                     </tbody>
                 </table>
                 <div style={{marginTop: '20px'}}>
-                     <Link to="/pay-fee" style={{padding: '8px 15px', background: '#6c757d', color: 'white', borderRadius: '6px', textDecoration: 'none'}}>Quay về</Link>
+                     <Link to="/payfee" style={{padding: '8px 15px', background: '#6c757d', color: 'white', borderRadius: '6px', textDecoration: 'none'}}>Quay về</Link>
                 </div>
             </div>
         </div>

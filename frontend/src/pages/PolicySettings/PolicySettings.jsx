@@ -35,7 +35,7 @@ const PolicySettings = () => {
         <div className="container">
             <h2 style={{textAlign: 'center', color: '#2d3436', marginBottom: '20px'}}>Quản lý chính sách đoàn phí</h2>
             <div className="actions" style={{textAlign: 'right', marginBottom: '15px'}}>
-                <Link to="/policy-settings/add" className="btn-add btn-policy-add">Thêm chính sách mới</Link>
+                <Link to="/policysettings/add" className="btn-add btn-policy-add">Thêm chính sách mới</Link>
             </div>
             
             <div className="table-wrapper">

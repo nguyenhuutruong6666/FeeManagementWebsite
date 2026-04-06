@@ -30,7 +30,7 @@ const ActivityApproval = () => {
                     </tbody>
                 </table>
                 <div style={{marginTop: '20px', textAlign: 'right'}}>
-                    <Link to="/activity-management" style={{padding: '8px 15px', background: '#6c757d', color: 'white', borderRadius: '6px', textDecoration: 'none'}}>Quay về</Link>
+                    <Link to="/activitymanagement" style={{padding: '8px 15px', background: '#6c757d', color: 'white', borderRadius: '6px', textDecoration: 'none'}}>Quay về</Link>
                 </div>
             </div>
         </div>

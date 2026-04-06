@@ -28,15 +28,15 @@ const Sidebar = () => {
                 )}
                 
                 {(user?.isAdmin === 1 || ['BCH Trường', 'BCH Khoa', 'BCH Chi đoàn'].includes(user?.roleName)) && (
-                    <li><Link to="/manage-transactions" className={location.pathname === '/manage-transactions' ? 'active' : ''}>Quản lý giao dịch</Link></li>
+                    <li><Link to="/managetransactions" className={location.pathname === '/managetransactions' ? 'active' : ''}>Quản lý giao dịch</Link></li>
                 )}
                 
                 {['BCH Trường', 'BCH Khoa', 'BCH Chi đoàn'].includes(user?.roleName) && (
-                    <li><Link to="/fee-cashbook-summary" className={location.pathname === '/fee-cashbook-summary' ? 'active' : ''}>Quản lý sổ quỹ</Link></li>
+                    <li><Link to="/feecashbooksummary" className={location.pathname === '/feecashbooksummary' ? 'active' : ''}>Quản lý sổ quỹ</Link></li>
                 )}
 
                 {['BCH Trường', 'BCH Khoa', 'BCH Chi đoàn'].includes(user?.roleName) && (
-                    <li><Link to="/activity-management" className={location.pathname === '/activity-management' ? 'active' : ''}>Quản lý hoạt động</Link></li>
+                    <li><Link to="/activitymanagement" className={location.pathname === '/activitymanagement' ? 'active' : ''}>Quản lý hoạt động</Link></li>
                 )}
 
                 <li><Link to="/profile" className={location.pathname === '/profile' ? 'active' : ''}>Thông tin tài khoản</Link></li>

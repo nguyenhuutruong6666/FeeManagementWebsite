@@ -28,7 +28,7 @@ const Profile = () => {
             <div className="profile-card">
                 <div className="profile-header">
                     <div className="avatar">
-                        <img src="/logo.png" alt="avatar" />
+                        <img src="/user.png" alt="avatar" style={{width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', background: '#e2e8f0'}} />
                     </div>
                     <div className="info">
                         <h3>{profile.fullName}</h3>
@@ -58,7 +58,7 @@ const Profile = () => {
 
                 <div className="profile-footer">
                     <Link to={`/users/edit/${user?.userId}`} className="btn-edit">Chỉnh sửa thông tin</Link>
-                    <Link to="/profile/change-password" className="btn-delete">Đổi mật khẩu</Link>
+                    <Link to="/profile/changepassword" className="btn-delete">Đổi mật khẩu</Link>
                 </div>
             </div>
         </div>

@@ -22,44 +22,64 @@ const Login = () => {
             const response = await authService.login({ userName, password });
             if (response.success) {
                 setAuth(response.data.user, response.data.token);
-                navigate('/dashboard');
+                navigate('/');
             }
         } catch (err) {
-            setError(err.message || 'Đăng nhập thất bại.');
+            setError(err.message || 'Đăng nhập thất bại. Kiểm tra lại thông tin.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="login-container">
-            <div className="login-box">
-                <h2>HỆ THỐNG QUẢN LÝ ĐOÀN PHÍ</h2>
-                {error && <div className="error">{error}</div>}
-                <form onSubmit={handleSubmit}>
-                    <input 
-                        type="text" 
-                        name="username" 
-                        placeholder="Tên đăng nhập hoặc Email" 
-                        value={userName} 
-                        onChange={(e) => setUserName(e.target.value)} 
-                        required 
-                    />
-                    <input 
-                        type="password" 
-                        name="password" 
-                        placeholder="Mật khẩu" 
-                        value={password} 
-                        onChange={(e) => setPassword(e.target.value)} 
-                        required 
-                    />
-                    <button type="submit" disabled={loading}>
-                        {loading ? 'Đang xử lý...' : 'Đăng nhập'}
+        <div className="login-page">
+            <div className="login-card">
+                <div className="brand">
+                    <img src="/hnue.png" alt="Logo Đoành" className="logo-img" />
+                    <h2>QUẢN LÝ ĐOÀN PHÍ</h2>
+                    <p>Đăng nhập để vào hệ thống nội bộ</p>
+                </div>
+                
+                {error && <div className="error" style={{textAlign:'center', fontSize:'0.9rem'}}>{error}</div>}
+                
+                <form className="auth-form" onSubmit={handleSubmit}>
+                    <div className="input-wrapper">
+                        <input 
+                            type="text" 
+                            placeholder="Tên đăng nhập / Email / CCCD" 
+                            value={userName} 
+                            onChange={(e) => setUserName(e.target.value)} 
+                            required 
+                        />
+                        <span className="input-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </span>
+                    </div>
+                    
+                    <div className="input-wrapper">
+                        <input 
+                            type="password" 
+                            placeholder="Mật khẩu của bạn" 
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)} 
+                            required 
+                        />
+                        <span className="input-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        </span>
+                    </div>
+                    
+                    <div className="options">
+                        <label>
+                            <input type="checkbox" name="remember" /> Ghi nhớ đăng nhập
+                        </label>
+                        <Link to="/forgotpassword">Quên mật khẩu?</Link>
+                    </div>
+                    
+                    <button type="submit" className="btn-submit" disabled={loading}>
+                        {loading ? 'Đang xử lý...' : 'ĐĂNG NHẬP'}
                     </button>
                 </form>
-                <div className="forgot">
-                    <Link to="/forgot-password">Quên mật khẩu?</Link>
-                </div>
             </div>
         </div>
     );

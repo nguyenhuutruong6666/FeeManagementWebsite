@@ -8,7 +8,7 @@ const AddPolicy = () => {
         <div className="container">
             <h2>Thiết lập chính sách đoàn phí</h2>
             <div style={{background: 'white', padding: '25px', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', maxWidth: '600px', margin: '0 auto'}}>
-                <form onSubmit={(e) => { e.preventDefault(); navigate('/policy-settings'); }}>
+                <form onSubmit={(e) => { e.preventDefault(); navigate('/policysettings'); }}>
                     <div style={{marginBottom: '15px'}}>
                         <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Tên chính sách:</label>
                         <input type="text" required placeholder="VD: Đoàn phí năm học 2024-2025" style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}} />
@@ -41,7 +41,7 @@ const AddPolicy = () => {
 
                     <div>
                         <button type="submit" style={{padding: '10px 20px', background: '#0984e3', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', marginRight: '10px'}}>Lưu chính sách</button>
-                        <Link to="/policy-settings" style={{padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'none'}}>Quay lại</Link>
+                        <Link to="/policysettings" style={{padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'none'}}>Quay lại</Link>
                     </div>
                 </form>
             </div>
