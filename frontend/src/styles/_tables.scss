@@ -1,0 +1,67 @@
+@import './variables';
+
+.table-wrapper {
+  background: $surface;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  border: 1px solid $border-color;
+  margin-bottom: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  
+  th, td {
+    padding: 16px 20px;
+    text-align: left;
+    border-bottom: 1px solid $border-color;
+  }
+  
+  th {
+    background-color: #f1f5f9;
+    color: $text-muted;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+  }
+  
+  tbody tr {
+    transition: $transition-fast;
+    
+    &:last-child td {
+      border-bottom: none;
+    }
+    
+    &:hover {
+      background-color: #f8fafc;
+    }
+  }
+}
+
+// Status Badges
+.status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+  
+  &.active, &.success {
+    background: #dcfce7;
+    color: #166534;
+  }
+  
+  &.draft, &.pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  
+  &.failed, &.canceled {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+}

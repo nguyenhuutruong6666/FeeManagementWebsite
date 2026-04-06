@@ -1,7 +1,9 @@
+import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import useAuthStore from '../../store/authStore';
 import { Link } from 'react-router-dom';
 import { formatDate, getGenderLabel } from '../../utils/formatters';
+import './Profile.scss';
 
 const Profile = () => {
     const { user } = useAuthStore();
@@ -26,7 +28,7 @@ const Profile = () => {
             <div className="profile-card">
                 <div className="profile-header">
                     <div className="avatar">
-                        <img src="/logo.png" alt="avatar" style={{width: '90px', height: '90px', borderRadius: '50%', marginRight: '20px'}} />
+                        <img src="/logo.png" alt="avatar" />
                     </div>
                     <div className="info">
                         <h3>{profile.fullName}</h3>
@@ -37,26 +39,26 @@ const Profile = () => {
                     </div>
                 </div>
 
-                <div className="profile-body" style={{marginTop: '20px'}}>
-                    <table className="table profile-table" style={{border: 'none', boxShadow: 'none'}}>
+                <div className="profile-body">
+                    <table className="table profile-table">
                         <tbody>
-                            <tr><th style={{background: '#f9f9f9', width: '200px'}}>Tên đăng nhập:</th><td>{profile.userName}</td></tr>
-                            <tr><th style={{background: '#f9f9f9'}}>Họ và tên:</th><td>{profile.fullName}</td></tr>
-                            <tr><th style={{background: '#f9f9f9'}}>Email:</th><td>{profile.email}</td></tr>
-                            <tr><th style={{background: '#f9f9f9'}}>CCCD/MSV:</th><td>{profile.identifyCard}</td></tr>
-                            <tr><th style={{background: '#f9f9f9'}}>Ngày sinh:</th><td>{formatDate(profile.birthDate)}</td></tr>
-                            <tr><th style={{background: '#f9f9f9'}}>Giới tính:</th><td>{getGenderLabel(profile.gender)}</td></tr>
-                            <tr><th style={{background: '#f9f9f9'}}>Ngày vào Đoàn:</th><td>{formatDate(profile.joinDate)}</td></tr>
-                            <tr><th style={{background: '#f9f9f9'}}>Vai trò:</th><td>{profile.roleName}</td></tr>
-                            <tr><th style={{background: '#f9f9f9'}}>Đơn vị:</th><td>{profile.unitBrand?.unit?.title}</td></tr>
-                            <tr><th style={{background: '#f9f9f9'}}>Thuộc khối:</th><td>{profile.unitBrand?.brand?.title}</td></tr>
+                            <tr><th>Tên đăng nhập:</th><td>{profile.userName}</td></tr>
+                            <tr><th>Họ và tên:</th><td>{profile.fullName}</td></tr>
+                            <tr><th>Email:</th><td>{profile.email}</td></tr>
+                            <tr><th>CCCD/MSV:</th><td>{profile.identifyCard}</td></tr>
+                            <tr><th>Ngày sinh:</th><td>{formatDate(profile.birthDate)}</td></tr>
+                            <tr><th>Giới tính:</th><td>{getGenderLabel(profile.gender)}</td></tr>
+                            <tr><th>Ngày vào Đoàn:</th><td>{formatDate(profile.joinDate)}</td></tr>
+                            <tr><th>Vai trò:</th><td>{profile.roleName}</td></tr>
+                            <tr><th>Đơn vị:</th><td>{profile.unitBrand?.unit?.title}</td></tr>
+                            <tr><th>Thuộc khối:</th><td>{profile.unitBrand?.brand?.title}</td></tr>
                         </tbody>
                     </table>
                 </div>
 
-                <div className="profile-footer" style={{textAlign: 'right', marginTop: '15px'}}>
-                    <Link to={`/users/edit/${user?.userId}`} className="btn-edit" style={{padding: '8px 12px', background: '#38ada9', color: '#fff', borderRadius: '5px', textDecoration: 'none', marginRight: '10px'}}>Chỉnh sửa thông tin</Link>
-                    <Link to="/profile/change-password" className="btn-danger" style={{padding: '8px 12px', borderRadius: '5px', textDecoration: 'none'}}>Đổi mật khẩu</Link>
+                <div className="profile-footer">
+                    <Link to={`/users/edit/${user?.userId}`} className="btn-edit">Chỉnh sửa thông tin</Link>
+                    <Link to="/profile/change-password" className="btn-delete">Đổi mật khẩu</Link>
                 </div>
             </div>
         </div>

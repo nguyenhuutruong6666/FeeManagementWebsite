@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import './Users.scss';
 import { userService } from '../../services/userService';
 import { formatDate, getGenderLabel } from '../../utils/formatters';
 
@@ -28,11 +29,9 @@ const Users = () => {
         <div className="container">
             <h2>Quản lý người dùng</h2>
 
-            <div className="actions" style={{ marginBottom: '20px' }}>
-                {/* <Link to="/users/add" className="btn btn-add btn-primary">Thêm người dùng</Link>
-                <Link to="/users/import" className="btn btn-import btn-info" style={{ marginLeft: '10px'}}>Import danh sách</Link> */}
-                <Link to="/users/add" className="btn-primary" style={{padding: '8px 12px', borderRadius: '5px', textDecoration: 'none'}}>Thêm người dùng</Link>
-                 <Link to="/users/import" className="btn-success" style={{padding: '8px 12px', borderRadius: '5px', textDecoration: 'none', marginLeft: '10px'}}>Import danh sách</Link>
+            <div className="actions-bar">
+                <Link to="/users/add" className="btn-add">Thêm người dùng</Link>
+                <Link to="/users/import" className="btn-success">Import danh sách</Link>
             </div>
 
             <div className="table-wrapper">

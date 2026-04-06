@@ -1,0 +1,67 @@
+@import './variables';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-family-base;
+  background-color: $background;
+  color: $text-main;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: $text-main;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.container {
+  margin-left: 240px;
+  max-width: calc(100% - 240px);
+  padding: 100px 40px 40px 40px; // Accounting for fixed header
+  min-height: 100vh;
+  transition: $transition-medium;
+}
+
+a {
+  color: $primary;
+  text-decoration: none;
+  transition: $transition-fast;
+  
+  &:hover {
+    color: $primary-dark;
+  }
+}
+
+.error {
+  background: #fee2e2;
+  color: $danger-dark;
+  padding: 10px 14px;
+  border-radius: $border-radius-sm;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  border-left: 4px solid $danger;
+}
+
+.success {
+  background: #d1fae5;
+  color: $success-dark;
+  padding: 10px 14px;
+  border-radius: $border-radius-sm;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  border-left: 4px solid $success;
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin-left: 0;
+    max-width: 100%;
+    padding: 90px 20px 20px 20px;
+  }
+}

@@ -1,85 +1,60 @@
-body {
-  font-family: "Segoe UI", sans-serif;
-  background: #f7f9fc;
+@import '../../styles/variables';
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
 }
 
-.container {
-  margin-left: 240px;
-  max-width: calc(100% - 320px);
-  padding: 40px 30px;
-  transition: margin-left 0.3s ease;
-}
-
-h1 {
-  color: #2d3436;
-  margin-bottom: 10px;
-}
-
-p {
-  color: #555;
-  font-size: 16px;
-}
-
-.actions {
-  margin-top: 30px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-.actions a {
-  display: inline-block;
-  padding: 14px 28px;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-/* Nộp đoàn phí */
-.btn-pay {
-  background: linear-gradient(135deg, #00b894, #00cec9);
-  color: white;
-  box-shadow: 0 4px 10px rgba(0, 206, 201, 0.3);
-}
-
-.btn-pay:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(0, 206, 201, 0.4);
-}
-
-/* Xem giao dịch */
-.btn-view {
-  background: linear-gradient(135deg, #0984e3, #74b9ff);
-  color: white;
-  box-shadow: 0 4px 10px rgba(9, 132, 227, 0.3);
-}
-
-.btn-view:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(9, 132, 227, 0.4);
-}
-
-/* Thiết lập chính sách đoàn phí */
-.btn-policy {
-  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-  color: white;
-  box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
-}
-
-.btn-policy:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(108, 92, 231, 0.4);
-}
-
-@media (max-width: 768px) {
-  .container {
-    margin-left: 0;
-    max-width: 100%;
+.dashboard-card {
+  background: $surface;
+  padding: 24px;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-sm;
+  text-align: center;
+  border: 1px solid $border-color;
+  transition: $transition-medium;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-lg;
+    border-color: $primary-light;
   }
-  .actions a {
-    width: 100%;
-    text-align: center;
+
+  .card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
+  
+  h3 {
+    margin: 0 0 10px 0;
+    color: $text-main;
+    font-size: 1.1rem;
+  }
+  
+  p {
+    color: $text-muted;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    min-height: 48px;
+  }
+}
+
+.btn-action {
+  background: linear-gradient(135deg, $primary, $secondary);
+  color: white;
+  padding: 10px 20px;
+  border-radius: $border-radius-sm;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+  transition: $transition-medium;
+  border: none;
+  width: 80%;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    color: white;
   }
 }

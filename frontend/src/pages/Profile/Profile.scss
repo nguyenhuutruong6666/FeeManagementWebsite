@@ -1,0 +1,65 @@
+@import '../../styles/variables';
+
+.profile-card {
+  background: $surface;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  border: 1px solid $border-color;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  padding: 30px;
+  background: linear-gradient(135deg, $primary-light, #ffffff);
+  border-bottom: 1px solid $border-color;
+  
+  .avatar {
+    margin-right: 30px;
+    img {
+      border: 4px solid white;
+      box-shadow: $shadow-md;
+      background: white;
+    }
+  }
+  
+  .info {
+    h3 {
+      font-size: 1.5rem;
+      margin: 0 0 10px 0;
+      color: $primary-dark;
+    }
+    p {
+      margin: 4px 0;
+      color: $text-main;
+      font-size: 0.95rem;
+      strong { color: $text-muted; }
+    }
+  }
+}
+
+.profile-body {
+  padding: 0;
+  
+  .profile-table {
+    margin: 0;
+    th {
+      background: #f8fafc;
+      width: 220px;
+      color: $text-muted;
+      border-right: 1px solid $border-color;
+      font-weight: 600;
+    }
+    td {
+      color: $text-main;
+      font-weight: 500;
+    }
+  }
+}
+
+.profile-footer {
+  padding: 20px 30px;
+  background: #f8fafc;
+  border-top: 1px solid $border-color;
+}
