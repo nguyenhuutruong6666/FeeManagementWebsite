@@ -1,0 +1,309 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Unit {
+  id    Int    @id @default(autoincrement())
+  title String @db.VarChar(50)
+
+  unitBrands   UnitBrand[]
+  feeSummaries FeeSummary[]
+
+  @@map("unit")
+}
+
+model Brand {
+  id    Int    @id @default(autoincrement())
+  title String @db.VarChar(50)
+
+  unitBrands UnitBrand[]
+
+  @@map("brand")
+}
+
+model UnitBrand {
+  id           Int  @id @default(autoincrement())
+  brandId      Int  @map("brand_id")
+  unitId       Int  @map("unit_id")
+  parentUnitId Int? @map("parent_unit_id")
+
+  brand Brand @relation(fields: [brandId], references: [id])
+  unit  Unit  @relation(fields: [unitId], references: [id])
+
+  users                    User[]
+  activityProposals        ActivityProposal[]
+  feeCashbooks             FeeCashbook[]
+  feeDistributions         FeeDistribution[]
+  feeDistributionTransfers FeeDistribution[]  @relation("TransferUnit")
+  feeApprovals             FeeApproval[]
+
+  @@map("unit_brand")
+}
+
+model User {
+  userId       Int       @id @default(autoincrement()) @map("userId")
+  userName     String    @unique @db.VarChar(255) @map("userName")
+  fullName     String    @db.VarChar(255) @map("fullName")
+  gender       Int?      @db.SmallInt
+  identifyCard String?   @db.VarChar(255) @map("identifyCard")
+  email        String    @unique @db.VarChar(255)
+  password     String    @db.VarChar(255)
+  birthDate    DateTime? @map("birthDate") @db.Date
+  joinDate     DateTime? @map("joinDate") @db.Date
+  roleName     String?   @map("role_name") @db.VarChar(100)
+  isAdmin      Int       @default(0) @db.SmallInt @map("isAdmin")
+  unitId       Int?      @map("unit_id")
+  createdAt    DateTime  @default(now()) @map("createdAt")
+  updatedAt    DateTime  @updatedAt @map("updatedAt")
+
+  unitBrand UnitBrand? @relation(fields: [unitId], references: [id])
+
+  feePolicies              FeePolicy[]
+  feeObligations           FeeObligation[]
+  feePaymentsAsPayer       FeePayment[]         @relation("Payer")
+  feePaymentsAsCollector   FeePayment[]         @relation("Collector")
+  feeReceipts              FeeReceipt[]
+  feeCashbooks             FeeCashbook[]
+  feeDistributions         FeeDistribution[]
+  feeApprovals             FeeApproval[]
+  activityProposals        ActivityProposal[]   @relation("Proposer")
+  activityApprovals        ActivityProposal[]   @relation("Approver")
+  activityVoucherFiles     ActivityVoucherFile[]
+  feeGenerationLogs        FeeGenerationLog[]
+
+  @@map("users")
+}
+
+model ActivityProposal {
+  id               Int       @id @default(autoincrement())
+  title            String    @db.VarChar(255)
+  content          String?   @db.Text
+  estimatedBudget  Decimal   @default(0.00) @map("estimated_budget") @db.Decimal(12, 2)
+  expectedDate     DateTime? @map("expected_date") @db.Date
+  proposerId       Int       @map("proposer_id")
+  unitId           Int       @map("unit_id")
+  status           String    @default("draft") @db.VarChar(50)
+  approvedBy       Int?      @map("approved_by")
+  approvedAt       DateTime? @map("approved_at")
+  rejectionReason  String?   @map("rejection_reason") @db.Text
+  approvedBudget   Decimal   @default(0.00) @map("approved_budget") @db.Decimal(12, 2)
+  approvalComment  String?   @map("approval_comment") @db.Text
+  advancePayment   String?   @map("advance_payment") @db.VarChar(250)
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  proposer     User               @relation("Proposer", fields: [proposerId], references: [userId])
+  approver     User?              @relation("Approver", fields: [approvedBy], references: [userId])
+  unitBrand    UnitBrand          @relation(fields: [unitId], references: [id])
+  voucherFiles ActivityVoucherFile[]
+
+  @@map("activity_proposal")
+}
+
+model ActivityVoucherFile {
+  id         Int      @id @default(autoincrement())
+  activityId Int      @map("activity_id")
+  filePath   String   @db.VarChar(255) @map("file_path")
+  uploadedBy Int?     @map("uploaded_by")
+  uploadedAt DateTime @default(now()) @map("uploaded_at")
+
+  activity ActivityProposal @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  uploader User?            @relation(fields: [uploadedBy], references: [userId], onDelete: SetNull)
+
+  @@map("activity_voucher_files")
+}
+
+model FeePolicy {
+  id             Int       @id @default(autoincrement())
+  policyName     String    @db.VarChar(255) @map("policy_name")
+  cycle          String    @db.VarChar(50)
+  dueDate        DateTime? @map("due_date") @db.Date
+  standardAmount Decimal   @db.Decimal(10, 2) @map("standard_amount")
+  status         String    @default("active") @db.VarChar(50)
+  rulesJson      String?   @map("rules_json") @db.Text
+  createdBy      Int?      @map("created_by")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  creator        User?              @relation(fields: [createdBy], references: [userId])
+  feeObligations FeeObligation[]
+  history        FeePolicyHistory[]
+  generationLogs FeeGenerationLog[]
+
+  @@map("fee_policy")
+}
+
+model FeePolicyHistory {
+  id          Int       @id @default(autoincrement())
+  policyId    Int       @map("policy_id")
+  appliedFrom DateTime  @map("applied_from") @db.Date
+  appliedTo   DateTime? @map("applied_to") @db.Date
+  isActive    Int       @default(1) @db.SmallInt @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  policy FeePolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+
+  @@map("fee_policy_history")
+}
+
+model FeeObligation {
+  id            Int       @id @default(autoincrement())
+  userId        Int       @map("user_id")
+  policyId      Int       @map("policy_id")
+  periodLabel   String    @db.VarChar(50) @map("period_label")
+  amount        Decimal   @db.Decimal(10, 2)
+  dueDate       DateTime? @map("due_date") @db.Date
+  status        String    @default("pending") @db.VarChar(50)
+  referenceCode String?   @db.VarChar(100) @map("reference_code")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  user     User        @relation(fields: [userId], references: [userId])
+  policy   FeePolicy   @relation(fields: [policyId], references: [id])
+  payments FeePayment[]
+
+  @@map("fee_obligation")
+}
+
+model FeePayment {
+  id              Int       @id @default(autoincrement())
+  obligationId    Int       @map("obligation_id")
+  payerId         Int       @map("payer_id")
+  collectorId     Int?      @map("collector_id")
+  paymentMethod   String?   @db.VarChar(100) @map("payment_method")
+  paymentDate     DateTime? @map("payment_date")
+  amount          Decimal   @db.Decimal(10, 2)
+  status          String    @default("pending") @db.VarChar(50)
+  receiptId       Int?      @map("receipt_id")
+  transactionCode String?   @unique @db.VarChar(100) @map("transaction_code")
+  note            String?   @db.Text
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  obligation FeeObligation @relation(fields: [obligationId], references: [id])
+  payer      User          @relation("Payer", fields: [payerId], references: [userId])
+  collector  User?         @relation("Collector", fields: [collectorId], references: [userId])
+  receipt    FeeReceipt?
+
+  @@map("fee_payment")
+}
+
+model FeeReceipt {
+  id          Int      @id @default(autoincrement())
+  paymentId   Int      @unique @map("payment_id")
+  receiptCode String   @db.VarChar(100) @map("receipt_code")
+  issueDate   DateTime @default(now()) @map("issue_date")
+  issuedBy    Int?     @map("issued_by")
+  amount      Decimal  @db.Decimal(10, 2)
+  fileUrl     String?  @db.VarChar(255) @map("file_url")
+  status      String   @default("issued") @db.VarChar(50)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  payment FeePayment @relation(fields: [paymentId], references: [id])
+  issuer  User?      @relation(fields: [issuedBy], references: [userId])
+
+  @@map("fee_receipt")
+}
+
+model FeeCashbook {
+  id                  Int      @id @default(autoincrement())
+  unitId              Int      @map("unit_id")
+  transactionType     String   @db.VarChar(50) @map("transaction_type")
+  transactionCategory String?  @db.VarChar(50) @map("transaction_category")
+  transactionDate     DateTime @default(now()) @map("transaction_date")
+  amount              Decimal  @db.Decimal(10, 2)
+  description         String?  @db.Text
+  recordedBy          Int?     @map("recorded_by")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  unitBrand UnitBrand @relation(fields: [unitId], references: [id])
+  recorder  User?     @relation(fields: [recordedBy], references: [userId])
+
+  @@map("fee_cashbook")
+}
+
+model FeeDistribution {
+  id             Int       @id @default(autoincrement())
+  periodLabel    String    @db.VarChar(50) @map("period_label")
+  unitId         Int       @map("unit_id")
+  ratioJson      String?   @db.Text @map("ratio_json")
+  totalAmount    Decimal   @db.Decimal(10, 2) @map("total_amount")
+  amountChiDoan  Decimal   @default(0.00) @db.Decimal(10, 2) @map("amount_chi_doan")
+  amountKhoa     Decimal   @default(0.00) @db.Decimal(10, 2) @map("amount_khoa")
+  amountTruong   Decimal   @default(0.00) @db.Decimal(10, 2) @map("amount_truong")
+  detailJson     String?   @db.Text @map("detail_json")
+  transferUnitId Int?      @map("transfer_unit_id")
+  transferAmount Decimal   @default(0.00) @db.Decimal(10, 2) @map("transfer_amount")
+  transferDate   DateTime? @map("transfer_date")
+  status         String    @default("pending") @db.VarChar(50)
+  createdBy      Int?      @map("created_by")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  unitBrand    UnitBrand  @relation(fields: [unitId], references: [id])
+  transferUnit UnitBrand? @relation("TransferUnit", fields: [transferUnitId], references: [id])
+  creator      User?      @relation(fields: [createdBy], references: [userId])
+
+  @@map("fee_distribution")
+}
+
+model FeeApproval {
+  id          Int       @id @default(autoincrement())
+  periodLabel String    @db.VarChar(50) @map("period_label")
+  unitId      Int       @map("unit_id")
+  approvedBy  Int?      @map("approved_by")
+  approvedAt  DateTime? @map("approved_at")
+  status      String    @default("pending") @db.VarChar(50)
+  note        String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  unitBrand UnitBrand @relation(fields: [unitId], references: [id])
+  approver  User?     @relation(fields: [approvedBy], references: [userId])
+
+  @@map("fee_approval")
+}
+
+model FeeSummary {
+  id                 Int      @id @default(autoincrement())
+  unitId             Int      @map("unit_id")
+  totalMembers       Int      @default(0) @map("total_members")
+  paidMembers        Int      @default(0) @map("paid_members")
+  unpaidMembers      Int      @default(0) @map("unpaid_members")
+  totalActivities    Int      @default(0) @map("total_activities")
+  approvedActivities Int      @default(0) @map("approved_activities")
+  activeActivities   Int      @default(0) @map("active_activities")
+  totalIncome        Decimal  @default(0.00) @db.Decimal(12, 2) @map("total_income")
+  totalExpense       Decimal  @default(0.00) @db.Decimal(12, 2) @map("total_expense")
+  year               Int
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  unit Unit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  @@map("fee_summary")
+}
+
+model FeeGenerationLog {
+  id           Int      @id @default(autoincrement())
+  policyId     Int      @map("policy_id")
+  runBy        Int      @map("run_by")
+  cycleLabel   String   @db.VarChar(50) @map("cycle_label")
+  totalSuccess Int      @default(0) @map("total_success")
+  totalFailed  Int      @default(0) @map("total_failed")
+  runTime      DateTime @map("run_time")
+  note         String?  @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  policy FeePolicy @relation(fields: [policyId], references: [id])
+  runner User      @relation(fields: [runBy], references: [userId])
+
+  @@map("fee_generation_log")
+}

@@ -1,0 +1,11 @@
+.btn-manage { background:#0984e3; color:white; padding:8px 14px; text-decoration:none; border-radius:6px; font-weight:600; }
+.obligation-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:20px; }
+.obligation-card { background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); padding:20px; transition:transform .2s ease; }
+.obligation-card:hover { transform:translateY(-4px); }
+.payment-buttons { display:flex; justify-content:space-between; margin-top:15px; }
+.btn-cash, .btn-qr { width:48%; border:none; color:white; padding:10px; border-radius:6px; cursor:pointer; font-weight:600; }
+.btn-cash { background:linear-gradient(135deg,#00b894,#00cec9); }
+.btn-qr { background:linear-gradient(135deg,#6c5ce7,#a29bfe); }
+.overdue { color:#d63031; font-weight:bold; margin-left:5px; }
+.btn-remind { background:#e67e22; color:white; padding:8px 14px; text-decoration:none; border-radius:6px; font-weight:600; margin-left:10px; }
+.btn-remind:hover { background:#d35400; }

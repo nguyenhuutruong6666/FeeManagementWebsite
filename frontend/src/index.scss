@@ -1,0 +1,245 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f4f6fa;
+  padding-top: 70px;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: linear-gradient(90deg, #0056b3, #007bff);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+  z-index: 1000;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-left img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 8px;
+  padding: 4px;
+  margin-top: 5px;
+}
+
+.header-left h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-logout {
+  background: #e74c3c;
+  color: white;
+  padding: 12px;
+  text-decoration: none;
+  border-radius: 10px;
+  display: block;
+  width: 89%;
+  text-align: center;
+  font-weight: bold;
+  transition: 0.25s;
+  margin-bottom: 10px;
+}
+
+.btn-logout:hover {
+  background: #c0392b;
+}
+
+.sidebar {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  width: 220px;
+  height: calc(100vh - 70px);
+  background-color: #004080;
+  color: white;
+  padding-top: 10px;
+  overflow-y: auto;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar ul li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar ul li a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  padding: 14px 18px;
+  transition: 0.3s;
+}
+
+.sidebar ul li a.active,
+.sidebar ul li a:hover {
+  background-color: #0056b3;
+  padding-left: 25px;
+}
+
+.logout-container {
+    padding: 0 10px;
+}
+
+.container {
+  margin-left: 240px;
+  max-width: calc(100% - 320px);
+  padding: 40px 30px;
+  transition: margin-left 0.3s ease;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table th, .table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.table th {
+  background: #4a69bd;
+  color: white;
+}
+
+.table tr:hover {
+  background: #f4f6f9;
+}
+
+.btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn:hover {
+  background: #0056b3;
+}
+
+.btn-add:hover {
+  background: #079992;
+}
+
+.btn-edit, .btn-delete {
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  margin-right: 5px;
+}
+
+.btn-edit {
+  background: #60a3bc;
+}
+
+.btn-delete {
+  background: #e55039;
+}
+
+.btn-edit:hover {
+  background: #3c6382;
+}
+
+.btn-delete:hover {
+  background: #b71540;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input, 
+.form-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.form-actions {
+  margin-top: 15px;
+  text-align: right;
+}
+
+.btn-save {
+  padding: 8px 12px;
+  background: #38ada9;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-save:hover {
+  background: #079992;
+}
+
+.error {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.success {
+  background: #d4edda;
+  color: #155724;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin-left: 0;
+        max-width: 100%;
+    }
+}

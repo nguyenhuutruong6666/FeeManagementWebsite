@@ -1,0 +1,23 @@
+.btn-action {
+    display: inline-block;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    color: white;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-action:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.propose-action {
+    background: linear-gradient(135deg, #0984e3, #74b9ff);
+}
+
+.approve-action {
+    background: linear-gradient(135deg, #00b894, #00cec9);
+}

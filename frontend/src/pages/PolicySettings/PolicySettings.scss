@@ -1,0 +1,25 @@
+.policy-table { width: 100%; border-collapse: collapse; font-size: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.policy-table th, .policy-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+.policy-table th { background: #007bff; color: white; }
+.policy-table tr:nth-child(even) { background: #f9f9f9; }
+.policy-table tr:hover { background: #eef6ff; }
+
+.status.active { color: #27ae60; font-weight: bold; }
+.status.draft { color: #f39c12; font-weight: bold; }
+
+.btn-policy-add {
+  background: #27ae60; color: white; padding: 8px 15px;
+  text-decoration: none; border-radius: 6px;
+}
+.btn-policy-add:hover { background: #219150; }
+
+.btn-delete, .btn-activate, .btn-deactivate {
+  border: none; border-radius: 5px; padding: 5px 10px;
+  color: white; cursor: pointer; font-weight: 600;
+}
+.btn-delete { background: #dc3545; }
+.btn-delete:hover { background: #c82333; }
+.btn-activate { background: #0984e3; }
+.btn-activate:hover { background: #0772c3; }
+.btn-deactivate { background: #e67e22; }
+.btn-deactivate:hover { background: #cf711f; }
