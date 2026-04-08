@@ -1,36 +1,52 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import '../GenerateFeeObligation/GenerateFeeObligation.scss';
+import { useToast } from '../../components/Common/ToastNotification';
 
 const Disbursement = () => {
     const navigate = useNavigate();
+    const { toast } = useToast();
+
+    const handleSubmit = (e) => {
+        e.preventDefault(); 
+        toast.success('Hệ thống đã ghi nhận lập phiếu chi xuất quỹ thành công!');
+        navigate('/activitymanagement');
+    };
 
     return (
         <div className="container">
-            <h2>Xuất phiếu chi (Giải ngân)</h2>
-            <div style={{background: 'white', padding: '25px', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', maxWidth: '600px', margin: '0 auto'}}>
-                <form onSubmit={(e) => { e.preventDefault(); alert('Lưu phiếu chi thành công!'); navigate('/activitymanagement'); }}>
-                    <div style={{marginBottom: '15px'}}>
-                        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Hoạt động (đã duyệt):</label>
-                        <select required style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}}>
-                            <option value="">-- Chọn hoạt động --</option>
+            <div className="page-header">
+                <h2>Lập Phiếu chi (Giải ngân)</h2>
+                <p>Khấu trừ nguồn quỹ của tổ chức và xuất biên lai giải ngân cho các hoạt động đã được cấp phép.</p>
+            </div>
+            
+            <div className="policy-form-wrapper" style={{maxWidth: '600px'}}>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group-modern">
+                        <label>Chọn sự kiện / hoạt động (Đã được duyệt):</label>
+                        <select required>
+                            <option value="">-- Chọn danh mục hoạt động --</option>
                             <option value="1">Đại hội Chi đoàn - 500.000đ</option>
                         </select>
                     </div>
-                    <div style={{marginBottom: '15px'}}>
-                        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Số tiền chi (VNĐ):</label>
-                        <input type="number" required defaultValue="500000" style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}} />
+                    
+                    <div className="form-group-modern">
+                        <label>Số tiền thực chi (VNĐ):</label>
+                        <input type="number" required defaultValue="500000" />
                     </div>
-                    <div style={{marginBottom: '15px'}}>
-                        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Ghi chú chi:</label>
-                        <textarea rows="3" style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}}></textarea>
+                    
+                    <div className="form-group-modern">
+                        <label>Ghi chú chi:</label>
+                        <textarea rows="3" placeholder="Nhập lý do chi tiết (nếu có)..."></textarea>
                     </div>
-                    <div style={{marginBottom: '20px'}}>
-                        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Mã phiếu chi:</label>
-                        <input type="text" value={`PC-${new Date().getTime()}`} disabled style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px', background: '#f8f9fa'}} />
+                    
+                    <div className="form-group-modern">
+                        <label>Mã tra cứu phiếu chi (Auto):</label>
+                        <input type="text" value={`PC-${new Date().getTime()}`} disabled style={{background: '#f1f5f9', color: '#64748b', fontWeight: 'bold'}} />
                     </div>
-                    <div>
-                        <button type="submit" style={{padding: '10px 20px', background: '#00b894', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', marginRight: '10px'}}>Xuất phiếu chi</button>
-                        <Link to="/activitymanagement" style={{padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'none'}}>Hủy</Link>
+                    
+                    <div className="form-actions-modern">
+                        <Link to="/activitymanagement" className="btn-back-modern">Quay về</Link>
+                        <button type="submit" className="btn-save" style={{background: '#15803d'}}><i className="ri-printer-line"></i> Xuất Phiếu chi</button>
                     </div>
                 </form>
             </div>

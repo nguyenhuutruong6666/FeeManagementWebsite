@@ -1,6 +1,6 @@
 import useAuthStore from '../../store/authStore';
 import { Link } from 'react-router-dom';
-import './ActivityManagement.scss';
+import '../Dashboard/Dashboard.scss';
 
 const ActivityManagement = () => {
     const { user } = useAuthStore();
@@ -8,25 +8,37 @@ const ActivityManagement = () => {
 
     return (
         <div className="container">
-            <h1 style={{color: '#2d3436', marginBottom: '25px'}}>Quản lý hoạt động</h1>
+            <div className="page-header" style={{ marginBottom: '30px' }}>
+                <h2>Quản lý Hoạt động & Nội bộ</h2>
+                <p>Điều phối, xét duyệt và xuất quỹ cho các chương trình, phong trào của Đơn vị.</p>
+            </div>
             
-            <div className="actions" style={{display: 'flex', gap: '15px', flexWrap: 'wrap'}}>
+            <div className="dashboard-grid">
                 {['BCH Chi đoàn', 'BCH Khoa', 'BCH Trường'].includes(user_role) && (
-                    <Link to="/activitymanagement/proposal" className="btn-action propose-action">
-                        Đề xuất hoạt động
-                    </Link>
+                    <div className="dashboard-card">
+                        <div className="card-icon" style={{color: '#0ea5e9'}}><i className="ri-edit-circle-line"></i></div>
+                        <h3>Đề xuất hoạt động</h3>
+                        <p>Trình kế hoạch và dự trù kinh phí cho các chương trình sắp tới.</p>
+                        <Link to="/activitymanagement/proposal" className="btn-action">Bắt đầu đề xuất</Link>
+                    </div>
                 )}
                 
                 {['BCH Khoa', 'BCH Trường'].includes(user_role) && (
-                    <Link to="/activitymanagement/approval" className="btn-action approve-action">
-                        Phê duyệt hoạt động
-                    </Link>
+                    <div className="dashboard-card">
+                        <div className="card-icon" style={{color: '#8b5cf6'}}><i className="ri-todo-line"></i></div>
+                        <h3>Phê duyệt hoạt động</h3>
+                        <p>Xem xét, cấp phép cho các đề xuất từ đơn vị tuyến dưới.</p>
+                        <Link to="/activitymanagement/approval" className="btn-action">Vào trang duyệt</Link>
+                    </div>
                 )}
                 
                 {['BCH Trường'].includes(user_role) && (
-                    <Link to="/activitymanagement/disbursement" className="btn-action propose-action" style={{background: 'linear-gradient(135deg, #00b894, #55efc4)'}}>
-                        Xuất phiếu chi
-                    </Link>
+                    <div className="dashboard-card">
+                        <div className="card-icon" style={{color: '#10b981'}}><i className="ri-safe-2-line"></i></div>
+                        <h3>Xuất phiếu chi (Giải ngân)</h3>
+                        <p>Thực hiện thao tác rút quỹ để phục vụ các hoạt động đã duyệt.</p>
+                        <Link to="/activitymanagement/disbursement" className="btn-action" style={{background: '#10b981', borderColor: '#10b981', color: '#fff'}}>Tạo phiếu chi</Link>
+                    </div>
                 )}
             </div>
         </div>

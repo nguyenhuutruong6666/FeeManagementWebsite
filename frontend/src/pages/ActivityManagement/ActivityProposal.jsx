@@ -1,33 +1,46 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import '../GenerateFeeObligation/GenerateFeeObligation.scss';
+import { useToast } from '../../components/Common/ToastNotification';
 
 const ActivityProposal = () => {
     const navigate = useNavigate();
+    const { toast } = useToast();
+
+    const handleSubmit = (e) => {
+        e.preventDefault(); 
+        toast.success('Gửi đề xuất hoạt động thành công! Đang chờ duyệt.');
+        navigate('/activitymanagement');
+    };
 
     return (
         <div className="container">
-            <h2>Đề xuất hoạt động</h2>
-            <div style={{background: 'white', padding: '25px', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', maxWidth: '600px', margin: '0 auto'}}>
-                <form onSubmit={(e) => { e.preventDefault(); alert('Đề xuất thành công!'); navigate('/activitymanagement'); }}>
-                    <div style={{marginBottom: '15px'}}>
-                        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Tên hoạt động:</label>
-                        <input type="text" required style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}} />
+            <div className="page-header">
+                <h2>Đề xuất Hoạt động mới</h2>
+                <p>Khởi tạo hồ sơ sự kiện và đính kèm dự trù kinh phí để trình lên cấp quản lý.</p>
+            </div>
+            
+            <div className="policy-form-wrapper">
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group-modern">
+                        <label>Tên hoạt động:</label>
+                        <input type="text" placeholder="Nhập tên phong trào/chương trình..." required />
                     </div>
-                    <div style={{marginBottom: '15px'}}>
-                        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Mô tả hoạt động:</label>
-                        <textarea required rows="4" style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}}></textarea>
+                    <div className="form-group-modern">
+                        <label>Mô tả hoạt động:</label>
+                        <textarea required rows="4" placeholder="Mục đích, quy mô, thời gian..."></textarea>
                     </div>
-                    <div style={{marginBottom: '15px'}}>
-                        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Kinh phí dự kiến (VNĐ):</label>
-                        <input type="number" required style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}} />
+                    <div className="form-group-modern">
+                        <label>Kinh phí dự kiến (VNĐ):</label>
+                        <input type="number" placeholder="Ví dụ: 1000000" required />
                     </div>
-                    <div style={{marginBottom: '20px'}}>
-                        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>File đính kèm (Kế hoạch chi tiết):</label>
-                        <input type="file" required style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}} />
+                    <div className="form-group-modern">
+                        <label>Tải lên File đính kèm (Kế hoạch chi tiết):</label>
+                        <input type="file" required style={{background: 'white'}} />
                     </div>
-                    <div>
-                        <button type="submit" style={{padding: '10px 20px', background: '#0984e3', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', marginRight: '10px'}}>Gửi đề xuất</button>
-                        <Link to="/activitymanagement" style={{padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'none'}}>Hủy</Link>
+                    
+                    <div className="form-actions-modern">
+                        <Link to="/activitymanagement" className="btn-back-modern">Hủy</Link>
+                        <button type="submit" className="btn-save"><i className="ri-send-plane-fill"></i> Trình duyệt Đề xuất</button>
                     </div>
                 </form>
             </div>

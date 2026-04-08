@@ -1,1 +1,101 @@
-/* Specific styling handled inline in JSX for simplicity */
+@import '../../styles/variables';
+
+.cashbook-header-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: $shadow-sm;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid $border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .unit-info {
+        h3 {
+            margin: 0 0 8px 0;
+            color: $text-main;
+            font-size: 1.2rem;
+        }
+
+        p {
+            margin: 0;
+            color: $text-light;
+            font-size: 0.95rem;
+
+            strong {
+                color: $text-main;
+            }
+        }
+    }
+
+    .balance-badge {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        padding: 15px 25px;
+        border-radius: 12px;
+        text-align: right;
+        min-width: 250px;
+
+        @media (max-width: 768px) {
+            width: 100%;
+            text-align: left;
+        }
+
+        h4 {
+            margin: 0 0 5px 0;
+            color: #166534;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .amount {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #15803d;
+            margin: 0;
+        }
+    }
+}
+
+.action-toolbar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    .btn-toolbar {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: $transition-fast;
+
+        &.primary {
+            background: $primary;
+            color: white;
+
+            &:hover {
+                background: $primary-dark;
+            }
+        }
+
+        &.success {
+            background: #10b981;
+            color: white;
+
+            &:hover {
+                background: #059669;
+            }
+        }
+    }
+}

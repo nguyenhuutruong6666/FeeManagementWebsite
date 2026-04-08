@@ -15,50 +15,62 @@ const FeeCashbookSummary = () => {
 
     return (
         <div className="container">
-            <h2>Quản lý Sổ quỹ đoàn phí</h2>
+            <div className="page-header">
+                <h2>Quản lý Sổ quỹ Đoàn phí</h2>
+                <p>Theo dõi luồng tiền thu chi và phê duyệt các khoản nộp/chuyển cấp dưới.</p>
+            </div>
             
-            <div className="action-buttons" style={{marginBottom: '20px', display: 'flex', gap: '10px'}}>
-                <Link to="/feecashbooksummary/approve" className="btn btn-approve" style={{background: '#0984e3'}}>Phê duyệt kỳ thu phí</Link>
+            <div className="action-toolbar">
+                <Link to="/feecashbooksummary/approve" className="btn-toolbar primary">
+                    <i className="ri-check-double-line"></i> Phê duyệt khoản thu
+                </Link>
                 {['BCH Chi đoàn', 'BCH Khoa'].includes(user_role) && (
-                    <Link to="/feecashbooksummary/transfer" className="btn btn-transfer" style={{background: '#27ae60'}}>Phân bổ & Chuyển nộp</Link>
+                    <Link to="/feecashbooksummary/transfer" className="btn-toolbar success">
+                        <i className="ri-arrow-left-right-line"></i> Phân bổ & Chuyển nộp
+                    </Link>
                 )}
             </div>
 
-            <div className="summary-box" style={{background: '#fff', padding: '20px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '20px'}}>
-                <h3 style={{margin: '0 0 10px 0', color: '#2d3436'}}>Đơn vị: {unitName}</h3>
-                <p><strong>Cấp quản lý:</strong> {user_role || 'Chưa rõ'}</p>
-                <div className="balance-card" style={{marginTop: '15px', padding: '15px', background: '#f8f9fa', borderRadius: '8px', borderLeft: '5px solid #00b894'}}>
-                    <h4 style={{margin: '0 0 5px 0', color: '#636e72'}}>Tổng số dư hiện tại ( Đã được duyệt )</h4>
-                    <div className="balance-amount" style={{fontSize: '24px', fontWeight: 'bold', color: '#00b894'}}>
-                        {new Intl.NumberFormat('vi-VN').format(current_balance)}đ
-                    </div>
+            <div className="cashbook-header-card">
+                <div className="unit-info">
+                    <h3><i className="ri-building-4-line" style={{color: '#64748b'}}></i> {unitName}</h3>
+                    <p>Cấp quản lý hệ thống: <strong>{user_role || 'Chưa rõ'}</strong></p>
+                </div>
+                
+                <div className="balance-badge">
+                    <h4>Tổng số dư (Đã duyệt)</h4>
+                    <p className="amount">{new Intl.NumberFormat('vi-VN').format(current_balance)} đ</p>
                 </div>
             </div>
 
-            <hr style={{margin: '20px 0', border: 'none', borderTop: '1px solid #eee'}} />
-            
-            <h3 style={{marginBottom: '15px'}}>Danh sách đoàn viên đã nộp gần nhất</h3>
-            <div className="table-wrapper">
-                <table className="table data-table">
-                    <thead>
-                        <tr>
-                            <th>Họ tên</th>
-                            <th>Kỳ thu phí</th>
-                            <th>Số tiền</th>
-                            <th>Ngày nộp</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {transactions.map(t => (
-                            <tr key={t.id}>
-                                <td>{t.fullName}</td>
-                                <td>{t.period_label}</td>
-                                <td style={{color: '#27ae60', fontWeight: 'bold'}}>{new Intl.NumberFormat('vi-VN').format(t.amount)}đ</td>
-                                <td>{formatDate(t.updated_at)}</td>
+            <div className="data-table-card">
+                <h3 style={{marginTop: 0, marginBottom: '20px', fontSize: '1.1rem', color: '#0f172a'}}>Danh sách đoàn viên nộp gần nhất</h3>
+                <div className="table-wrapper">
+                    <table className="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Họ tên</th>
+                                <th>Kỳ thu phí</th>
+                                <th>Số tiền</th>
+                                <th>Ngày nộp</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {transactions.length > 0 ? transactions.map(t => (
+                                <tr key={t.id}>
+                                    <td style={{fontWeight: '600', color: '#0f172a'}}>{t.fullName}</td>
+                                    <td>{t.period_label}</td>
+                                    <td style={{color: '#10b981', fontWeight: 'bold'}}>{new Intl.NumberFormat('vi-VN').format(t.amount)} đ</td>
+                                    <td>{formatDate(t.updated_at)}</td>
+                                </tr>
+                            )) : (
+                                <tr>
+                                    <td colSpan="4" style={{textAlign: 'center', padding: '30px'}}>Chưa có giao dịch nào</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

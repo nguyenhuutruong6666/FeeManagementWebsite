@@ -31,31 +31,83 @@ const ReportSummary = () => {
     if (!summary) return <div className="container">Đang tải...</div>;
 
     const year = new Date().getFullYear();
+    const collectionRate = summary.total_members ? Math.round((summary.paid_members / summary.total_members) * 100) : 0;
+    
+    // Circle math
+    const radius = 60;
+    const circumference = 2 * Math.PI * radius;
+    const dashoffset = circumference - (collectionRate / 100) * circumference;
 
     return (
         <div className="container">
-            <h2>Báo cáo tổng hợp hoạt động đoàn phí</h2>
-            
-            <div className="report-card">
-                <h3>Thống kê đoàn viên</h3>
-                <p><b>Tổng đoàn viên:</b> {summary.total_members}</p>
-                <p style={{color: 'green'}}><b>Đã nộp đoàn phí:</b> {summary.paid_members}</p>
-                <p style={{color: 'red'}}><b>Chưa nộp:</b> {summary.unpaid_members}</p>
-                <p><b>Tỷ lệ thu:</b> {summary.total_members ? Math.round((summary.paid_members / summary.total_members) * 100) : 0}%</p>
+            <div className="page-header">
+                <h2>Báo cáo tổng hợp hoạt động</h2>
+                <p>Thống kê trực quan tình hình thu chi đoàn phí và tiến độ nộp của đoàn viên năm {year}.</p>
             </div>
             
-            <div className="report-card">
-                <h3>Thống kê hoạt động</h3>
-                <p><b>Tổng số hoạt động:</b> {summary.total_activities}</p>
-                <p style={{color: '#0984e3'}}><b>Đã phê duyệt:</b> {summary.approved_activities}</p>
-                <p style={{color: '#f39c12'}}><b>Đang thực hiện:</b> {summary.active_activities}</p>
-            </div>
-            
-            <div className="report-card">
-                <h3>Thu - chi năm {year}</h3>
-                <p style={{color: '#27ae60'}}><b>Tổng thu:</b> {new Intl.NumberFormat('vi-VN').format(summary.total_income)}đ</p>
-                <p style={{color: '#e74c3c'}}><b>Tổng chi:</b> {new Intl.NumberFormat('vi-VN').format(summary.total_expense)}đ</p>
-                <p><b>Số dư năm:</b> {new Intl.NumberFormat('vi-VN').format(summary.total_income - summary.total_expense)}đ</p>
+            <div className="report-grid">
+                {/* Tỉ lệ thu đoàn phí */}
+                <div className="report-card-modern">
+                    <h3><i className="ri-pie-chart-2-line" style={{color: '#8b5cf6'}}></i> Tỷ lệ thu đoàn phí</h3>
+                    
+                    <div className="stat-circle">
+                        <svg>
+                            <circle className="bg" cx="75" cy="75" r={radius} />
+                            <circle className="progress" cx="75" cy="75" r={radius} 
+                                    style={{strokeDasharray: circumference, strokeDashoffset: dashoffset, stroke: '#8b5cf6'}} />
+                        </svg>
+                        <div className="percentage">{collectionRate}%</div>
+                    </div>
+                    
+                    <div className="chart-bar">
+                        <div className="label-row"><span>Đã nộp:</span><span className="value">{summary.paid_members} / {summary.total_members} HV</span></div>
+                        <div className="progress-track"><div className="progress-fill" style={{width: `${collectionRate}%`, background: '#8b5cf6'}}></div></div>
+                    </div>
+                    <div className="chart-bar">
+                        <div className="label-row"><span>Chưa nộp:</span><span className="value" style={{color: '#ef4444'}}>{summary.unpaid_members} HV</span></div>
+                        <div className="progress-track"><div className="progress-fill" style={{width: `${100 - collectionRate}%`, background: '#ef4444'}}></div></div>
+                    </div>
+                </div>
+                
+                {/* Thu chi tài chính */}
+                <div className="report-card-modern">
+                    <h3><i className="ri-wallet-3-line" style={{color: '#10b981'}}></i> Thu - Chi tài khoản</h3>
+                    
+                    <div style={{textAlign: 'center', margin: '15px 0'}}>
+                        <p style={{color: '#64748b', margin: 0, fontSize: '0.9rem'}}>Thay đổi số dư</p>
+                        <h2 style={{margin: '5px 0', color: '#10b981', fontSize: '2rem'}}>+{new Intl.NumberFormat('vi-VN').format(summary.total_income - summary.total_expense)} <span style={{fontSize:'1rem'}}>VND</span></h2>
+                    </div>
+
+                    <div className="chart-bar">
+                        <div className="label-row"><span>Tổng thu:</span><span className="value">{new Intl.NumberFormat('vi-VN').format(summary.total_income)} đ</span></div>
+                        <div className="progress-track"><div className="progress-fill" style={{width: '100%', background: '#10b981'}}></div></div>
+                    </div>
+                    
+                    <div className="chart-bar">
+                        <div className="label-row"><span>Tổng chi:</span><span className="value">{new Intl.NumberFormat('vi-VN').format(summary.total_expense)} đ</span></div>
+                        <div className="progress-track"><div className="progress-fill" style={{width: `${(summary.total_expense / (summary.total_income || 1)) * 100}%`, background: '#f59e0b'}}></div></div>
+                    </div>
+                </div>
+
+                {/* Hoạt động */}
+                <div className="report-card-modern">
+                    <h3><i className="ri-task-line" style={{color: '#0ea5e9'}}></i> Tình hình Xét duyệt</h3>
+                    
+                    <div style={{textAlign: 'center', margin: '15px 0'}}>
+                        <p style={{color: '#64748b', margin: 0, fontSize: '0.9rem'}}>Tổng cộng</p>
+                        <h2 style={{margin: '5px 0', color: '#0f172a', fontSize: '2rem'}}>{summary.total_activities} <span style={{fontSize:'1rem'}}>Hoạt động</span></h2>
+                    </div>
+
+                    <div className="chart-bar">
+                        <div className="label-row"><span>Đã phê duyệt:</span><span className="value">{summary.approved_activities}</span></div>
+                        <div className="progress-track"><div className="progress-fill" style={{width: `${(summary.approved_activities / summary.total_activities) * 100}%`, background: '#0ea5e9'}}></div></div>
+                    </div>
+                    <div className="chart-bar">
+                        <div className="label-row"><span>Đang thực hiện chờ duyệt:</span><span className="value">{summary.active_activities}</span></div>
+                        <div className="progress-track"><div className="progress-fill" style={{width: `${(summary.active_activities / summary.total_activities) * 100}%`, background: '#94a3b8'}}></div></div>
+                    </div>
+                </div>
+
             </div>
         </div>
     );

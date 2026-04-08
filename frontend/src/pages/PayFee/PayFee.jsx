@@ -26,14 +26,17 @@ const PayFee = () => {
 
     return (
         <div className="container">
-            <h2>Nghĩa vụ đoàn phí của bạn</h2>
+            <div className="page-header">
+                <h2>Nghĩa vụ Đoàn phí của bạn</h2>
+                <p>Xem danh sách các khoản phí cần nộp và thực hiện thanh toán trực tuyến dễ dàng.</p>
+            </div>
             
-            {['BCH Chi đoàn'].includes(user_role) || user?.isAdmin === 1 ? (
-                <div style={{textAlign: 'right', marginBottom: '15px'}}>
-                    <Link to="/payfee/confirm" className="btn-manage" style={{marginRight: '10px'}}>Trang xác nhận tiền mặt (BCH)</Link>
-                    <Link to="/payfee/remind" className="btn-remind">Nhắc nợ đoàn viên</Link>
+            {(['BCH Chi đoàn', 'BCH Khoa', 'BCH Trường'].includes(user_role) || user?.isAdmin === 1) && (
+                <div style={{display: 'flex', gap: '10px', marginBottom: '20px'}}>
+                    <Link to="/payfee/confirm" className="btn-modern-outline" style={{width: 'auto'}}>Xác nhận thu tiền mặt (BCH)</Link>
+                    <Link to="/payfee/remind" className="btn-modern-outline" style={{width: 'auto', color: '#c2410c', borderColor: '#c2410c'}}>Nhắc nợ tự động</Link>
                 </div>
-            ) : null}
+            )}
 
             {obligations.length > 0 ? (
                 <div className="obligation-list">
@@ -41,27 +44,36 @@ const PayFee = () => {
                         const isOverdue = new Date(o.dueDate) < new Date();
                         return (
                             <div className="obligation-card" key={o.id}>
-                                <h3>{o.policyName}</h3>
-                                <p>Chu kỳ: <strong>{o.periodLabel}</strong></p>
-                                <p>
-                                    Hạn nộp: {new Date(o.dueDate).toLocaleDateString('vi-VN')}
-                                    {isOverdue && <span className="overdue">⚠️ Bạn đã quá hạn nộp</span>}
-                                </p>
-                                <p>Số tiền: <strong>{new Intl.NumberFormat('vi-VN').format(o.amount)}đ</strong></p>
-                                <p>Mã tham chiếu: <strong>{o.referenceCode}</strong></p>
+                                <div className="ob-details">
+                                    <h3>
+                                        <i className="ri-bill-line" style={{color: '#0ea5e9'}}></i> 
+                                        {o.policyName}
+                                        {isOverdue && <span className="status-badge" style={{background: '#fee2e2', color: '#ef4444', fontSize: '0.75rem', padding: '2px 8px'}}>Quá hạn</span>}
+                                    </h3>
+                                    <p>Mã tham chiếu: <strong>{o.referenceCode}</strong></p>
+                                    <p>Chu kỳ: <strong>{o.periodLabel}</strong></p>
+                                    <p>Hạn nộp: <strong style={{color: isOverdue ? '#ef4444' : 'inherit'}}>{new Date(o.dueDate).toLocaleDateString('vi-VN')}</strong></p>
+                                    <p style={{marginTop: '10px', fontSize: '1.1rem'}}>Số tiền thanh toán: <strong style={{color: '#10b981', fontSize: '1.2rem'}}>{new Intl.NumberFormat('vi-VN').format(o.amount)} đ</strong></p>
+                                </div>
                                 
-                                <form className="payment-form" onSubmit={(e) => e.preventDefault()}>
-                                    <div className="payment-buttons">
-                                        <button type="button" className="btn-cash" onClick={() => alert('Đã ghi nhận đóng tiền mặt')}>Nộp tiền mặt</button>
-                                        <button type="button" className="btn-qr" onClick={() => alert('Đang chuyển hướng VNPAY...')}>Thanh toán VNPay</button>
-                                    </div>
-                                </form>
+                                <div className="ob-actions">
+                                    <button type="button" className="btn-modern-primary" onClick={() => alert('Đang chuyển hướng VNPAY...')}>
+                                        <i className="ri-bank-card-line"></i> Thanh toán trực tuyến
+                                    </button>
+                                    <button type="button" className="btn-modern-outline" onClick={() => alert('Đã báo cáo nộp bằng tiền mặt')}>
+                                        <i className="ri-money-dollar-circle-line"></i> Nộp bằng tiền mặt
+                                    </button>
+                                </div>
                             </div>
                         );
                     })}
                 </div>
             ) : (
-                <p>Bạn không còn nghĩa vụ nào cần nộp.</p>
+                <div className="data-table-card" style={{textAlign: 'center', padding: '50px'}}>
+                    <i className="ri-check-double-line" style={{fontSize: '3rem', color: '#10b981', marginBottom: '15px'}}></i>
+                    <h3>Tuyệt vời!</h3>
+                    <p style={{color: '#64748b'}}>Bạn đã hoàn thành tất cả nghĩa vụ đoàn phí hiện có.</p>
+                </div>
             )}
         </div>
     );
