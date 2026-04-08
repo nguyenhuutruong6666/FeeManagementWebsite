@@ -4,11 +4,13 @@ import { Link } from 'react-router-dom';
 import { policyService } from '../../services/policyService';
 import { formatDate } from '../../utils/formatters';
 import './PolicySettings.scss';
+import { useToast } from '../../components/Common/ToastNotification';
 
 const PolicySettings = () => {
     const { user } = useAuthStore();
     const [policies, setPolicies] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
 
     useEffect(() => {
         fetchPolicies();
@@ -22,6 +24,7 @@ const PolicySettings = () => {
             }
         } catch (e) {
             console.error(e);
+            toast.error("Lỗi khi tải chính sách đoàn phí");
         } finally {
             setLoading(false);
         }
@@ -31,61 +34,76 @@ const PolicySettings = () => {
         return <div className="container"><p style={{color: 'red'}}>Bạn không có quyền truy cập trang này.</p></div>;
     }
 
+    const handleAction = (e, action) => {
+        e.preventDefault();
+        toast.info(`Chức năng ${action} đang được phát triển.`);
+    };
+
     return (
         <div className="container">
-            <h2 style={{textAlign: 'center', color: '#2d3436', marginBottom: '20px'}}>Quản lý chính sách đoàn phí</h2>
-            <div className="actions" style={{textAlign: 'right', marginBottom: '15px'}}>
-                <Link to="/policysettings/add" className="btn-add btn-policy-add">Thêm chính sách mới</Link>
+            <div className="page-header">
+                <h2>Quản lý Chính sách Đoàn phí</h2>
+                <p>Cấu hình các quy định và mức thu chuẩn theo từng chu kỳ phân bổ</p>
             </div>
             
-            <div className="table-wrapper">
-                <table className="table policy-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Tên chính sách</th>
-                            <th>Chu kỳ</th>
-                            <th>Hạn nộp</th>
-                            <th>Mức thu (VNĐ)</th>
-                            <th>Trạng thái</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan="7" style={{textAlign: 'center'}}>Đang tải...</td></tr>
-                        ) : policies.length > 0 ? (
-                            policies.map(p => (
-                                <tr key={p.id}>
-                                    <td>{p.id}</td>
-                                    <td>{p.policyName}</td>
-                                    <td>{p.cycle}</td>
-                                    <td>{formatDate(p.dueDate)}</td>
-                                    <td>{new Intl.NumberFormat('vi-VN').format(p.standardAmount)}đ</td>
-                                    <td>
-                                        {p.status === 'Active' ? (
-                                            <span className="status active">Kích hoạt</span>
-                                        ) : (
-                                            <span className="status draft">Nháp</span>
-                                        )}
-                                    </td>
-                                    <td>
-                                        {p.status === 'Active' ? (
-                                            <button className="btn-deactivate">Hủy kích hoạt</button>
-                                        ) : (
-                                            <>
-                                                <button className="btn-activate" style={{marginRight: '5px'}}>Kích hoạt</button>
-                                                <button className="btn-delete">Xóa</button>
-                                            </>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr><td colSpan="7" style={{textAlign: 'center'}}>Không có chính sách nào.</td></tr>
-                        )}
-                    </tbody>
-                </table>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '20px' }}>
+                <Link to="/policysettings/add" className="btn-primary" style={{ padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', color: 'white' }}>
+                    <i className="ri-add-line" style={{ marginRight: '8px' }}></i> Thiết lập Chính sách mới
+                </Link>
+            </div>
+            
+            <div className="data-table-card">
+                <div className="table-wrapper">
+                    <table className="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Mã CS</th>
+                                <th>Tên chính sách</th>
+                                <th>Chu kỳ</th>
+                                <th>Hạn nộp</th>
+                                <th>Mức thu</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr><td colSpan="7" style={{textAlign: 'center', padding: '30px'}}>Đang tải dữ liệu...</td></tr>
+                            ) : policies.length > 0 ? (
+                                policies.map(p => (
+                                    <tr key={p.id}>
+                                        <td style={{fontWeight: '600', color: '#0ea5e9'}}>#{p.id}</td>
+                                        <td style={{fontWeight: '600', color: '#0f172a'}}>{p.policyName}</td>
+                                        <td>{p.cycle}</td>
+                                        <td>{formatDate(p.dueDate)}</td>
+                                        <td style={{fontWeight: '600', color: '#10b981'}}>{new Intl.NumberFormat('vi-VN').format(p.standardAmount)} đ</td>
+                                        <td>
+                                            {p.status === 'Active' ? (
+                                                <span className="status-badge status-active">Kích hoạt</span>
+                                            ) : (
+                                                <span className="status-badge status-draft">Bản nháp</span>
+                                            )}
+                                        </td>
+                                        <td>
+                                            <div className="btn-actions">
+                                                {p.status === 'Active' ? (
+                                                    <button className="btn-deactivate" onClick={(e) => handleAction(e, 'Hủy kích hoạt')}>Hủy kích hoạt</button>
+                                                ) : (
+                                                    <>
+                                                        <button className="btn-activate" onClick={(e) => handleAction(e, 'Kích hoạt')}>Kích hoạt</button>
+                                                        <button className="btn-delete" onClick={(e) => handleAction(e, 'Xóa')}>Xóa</button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr><td colSpan="7" style={{textAlign: 'center', padding: '30px'}}>Không có dữ liệu thiết lập chính sách.</td></tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

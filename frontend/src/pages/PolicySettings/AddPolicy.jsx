@@ -1,68 +1,85 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import '../GenerateFeeObligation/GenerateFeeObligation.scss';
+import { useToast } from '../../components/Common/ToastNotification';
 
 const AddPolicy = () => {
     const navigate = useNavigate();
+    const { toast } = useToast();
 
     const [formData, setFormData] = useState({
         policyName: '',
-        cycle: 'HK1/2024',
+        cycle: 'Tháng',
         dueDate: '',
-        standardAmount: ''
+        standardAmount: '24000',
+        exemptions: ''
     });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await api.post('/fee-policies', formData);
+            const submitData = { ...formData };
+            if (submitData.exemptions) {
+               // Verify valid JSON
+               JSON.parse(submitData.exemptions);
+            }
+            const res = await api.post('/fee-policies', submitData);
             if (res.success) {
-                alert('Tạo chính sách thành công!');
+                toast.success('Tạo chính sách thành công!');
                 navigate('/policysettings');
             }
         } catch(error) {
-            alert(error.message || 'Lỗi');
+            toast.error(error.message || 'Thiết lập tham số lỗi. File JSON có thể không hợp lệ.');
         }
     };
 
     return (
         <div className="container">
-            <h2>Thiết lập chính sách đoàn phí</h2>
-            <div style={{background: 'white', padding: '25px', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', maxWidth: '600px', margin: '0 auto'}}>
+            <div className="page-header">
+                <h2>Thiết lập chính sách</h2>
+                <p>Tạo mới chính sách thu phí cho hệ thống đoàn trực thuộc</p>
+            </div>
+            
+            <div className="policy-form-wrapper">
                 <form onSubmit={handleSubmit}>
-                    <div style={{marginBottom: '15px'}}>
-                        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Tên chính sách:</label>
-                        <input type="text" required placeholder="VD: Đoàn phí năm học 2024-2025" style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}} />
+                    <div className="form-group-modern">
+                        <label>Tên chính sách:</label>
+                        <input type="text" required placeholder="VD: Đoàn phí năm học 2024-2025" 
+                               value={formData.policyName} onChange={e => setFormData({...formData, policyName: e.target.value})} />
                     </div>
                     
-                    <div style={{display: 'flex', gap: '15px', marginBottom: '15px'}}>
-                        <div style={{flex: 1}}>
-                            <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Chu kỳ nộp:</label>
-                            <select required style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}}>
+                    <div className="form-row">
+                        <div className="form-group-modern" style={{flex: 1}}>
+                            <label>Chu kỳ nộp:</label>
+                            <select required value={formData.cycle} onChange={e => setFormData({...formData, cycle: e.target.value})}>
                                 <option value="Tháng">Hàng tháng</option>
                                 <option value="Học kỳ">Theo học kỳ</option>
                                 <option value="Năm">Hàng năm</option>
                             </select>
                         </div>
-                        <div style={{flex: 1}}>
-                            <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Mức thu mặc định (VNĐ):</label>
-                            <input type="number" required defaultValue="24000" style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}} />
+                        <div className="form-group-modern" style={{flex: 1}}>
+                            <label>Mức thu chuẩn (VNĐ):</label>
+                            <input type="number" required 
+                                   value={formData.standardAmount} onChange={e => setFormData({...formData, standardAmount: e.target.value})} />
                         </div>
                     </div>
 
-                    <div style={{marginBottom: '15px'}}>
-                        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Luật giảm trừ (JSON):</label>
-                        <textarea placeholder={`{"BCH Chi đoàn": 12000, "BCH Khoa": 24000}`} rows="4" style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}}></textarea>
+                    <div className="form-group-modern">
+                        <label>Trường hợp giảm trừ (Cú pháp JSON):</label>
+                        <textarea placeholder={`{ "BCH Chi đoàn": 12000, "BCH Khoa": 24000 }`} rows="4" 
+                                  value={formData.exemptions} onChange={e => setFormData({...formData, exemptions: e.target.value})}></textarea>
                     </div>
 
-                    <div style={{marginBottom: '20px'}}>
-                        <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Hạn nộp đầu tiên:</label>
-                        <input type="date" required style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}} />
+                    <div className="form-group-modern">
+                        <label>Hạn nộp đầu tiên:</label>
+                        <input type="date" required 
+                               value={formData.dueDate} onChange={e => setFormData({...formData, dueDate: e.target.value})} />
                     </div>
 
-                    <div>
-                        <button type="submit" style={{padding: '10px 20px', background: '#0984e3', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', marginRight: '10px'}}>Lưu chính sách</button>
-                        <Link to="/policysettings" style={{padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'none'}}>Quay lại</Link>
+                    <div className="form-actions-modern">
+                        <Link to="/policysettings" className="btn-back-modern">Quay lại</Link>
+                        <button type="submit" className="btn-save">Hoàn thành & Lưu</button>
                     </div>
                 </form>
             </div>
