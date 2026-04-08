@@ -41,7 +41,7 @@ const Profile = () => {
                         </div>
                         <h3 className="profile-name">{profile.fullName}</h3>
                         <p className="profile-role">{profile.roleName || 'Đoàn viên'}</p>
-                        
+
                         <div className="profile-badges">
                             {profile.isAdmin === 1 && <span className="badge admin-badge">Quản trị viên</span>}
                             <span className="badge unit-badge">{profile.unitBrand?.brand?.title || 'Khối'}</span>

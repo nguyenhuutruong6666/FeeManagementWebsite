@@ -1,18 +1,30 @@
 import { Link } from 'react-router-dom';
+import './UserForm.scss';
 
 const ImportUsers = () => {
     return (
-         <div className="container">
-            <h2>Nhập danh sách người dùng</h2>
-            <div style={{background: '#fff', padding: '25px', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', maxWidth: '500px'}}>
+        <div className="container">
+            <div className="page-header">
+                <h2>Nhập danh sách người dùng</h2>
+                <p>Thêm nhanh người dùng hàng loạt bằng tệp dữ liệu mẫu</p>
+            </div>
+
+            <div className="form-wrapper">
                 <form onSubmit={(e) => { e.preventDefault(); alert('Import mockup'); }}>
-                    <div className="form-group">
-                        <label>Chọn file Excel (.xlsx):</label>
-                        <input type="file" accept=".xlsx, .xls" required className="form-control" />
+                    <div className="form-grid">
+                        <div className="form-section-title">Nạp dữ liệu từ Excel</div>
+                        <div className="form-group-modern" style={{ gridColumn: '1 / -1' }}>
+                            <label>Chọn file dữ liệu (.xlsx) <span style={{ color: 'red' }}>*</span></label>
+                            <input type="file" accept=".xlsx, .xls" required />
+                            <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '10px' }}>
+                                Tải biểu mẫu chuẩn tại đây nếu bạn chưa có.
+                            </p>
+                        </div>
                     </div>
-                    <div className="form-actions">
-                        <button type="submit" className="btn-save">Import</button>
-                        <Link to="/users" className="btn-back" style={{padding: '8px 12px', background: '#6c757d', color: 'white', borderRadius: '6px', textDecoration: 'none', marginLeft: '10px'}}>Quay lại</Link>
+
+                    <div className="form-actions-modern">
+                        <Link to="/users" className="btn-back-modern">Hủy bỏ</Link>
+                        <button type="submit" className="btn-save">Xử lý Import</button>
                     </div>
                 </form>
             </div>

@@ -1,0 +1,73 @@
+@import '../../styles/variables';
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  background: #f8fafc;
+  border-top: 1px solid $border-color;
+  
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  &__info {
+    font-size: 0.9rem;
+    color: $text-light;
+    
+    strong {
+      color: $text-main;
+      font-weight: 600;
+    }
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  &__current {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $primary-dark;
+    background: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid $border-color;
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $text-main;
+    cursor: pointer;
+    transition: $transition-fast;
+    
+    &:hover:not(:disabled) {
+      background: $primary-light;
+      color: $primary-dark;
+      border-color: #bae6fd;
+    }
+    
+    &:disabled {
+      background: #f1f5f9;
+      color: #cbd5e1;
+      cursor: not-allowed;
+      border-color: #e2e8f0;
+    }
+    
+    i {
+      font-size: 1.1rem;
+    }
+  }
+}

@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import './Users.scss';
 import { userService } from '../../services/userService';
 import { formatDate, getGenderLabel } from '../../utils/formatters';
+import Pagination from '../../components/Common/Pagination';
 
 const Users = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
 
     useEffect(() => {
         fetchUsers();
@@ -17,6 +20,7 @@ const Users = () => {
             const res = await userService.getAll();
             if (res.success) {
                 setUsers(res.data);
+                setCurrentPage(1); // Reset page on fetch
             }
         } catch (error) {
             console.error(error);
@@ -38,65 +42,103 @@ const Users = () => {
         }
     };
 
+    // Pagination Logic
+    const currentUsers = users.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
     return (
         <div className="container">
-            <h2>Quản lý người dùng</h2>
-
-            <div className="actions-bar">
-                <Link to="/users/add" className="btn-add">Thêm người dùng</Link>
-                <Link to="/users/import" className="btn-success">Import danh sách</Link>
+            <div className="page-header">
+                <h2>Quản lý người dùng</h2>
+                <p>Danh sách toàn bộ tài khoản và phân quyền trong hệ thống</p>
             </div>
 
-            <div className="table-wrapper">
-                <table className="table styled-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Tên đăng nhập</th>
-                            <th>Họ và tên</th>
-                            <th>Email</th>
-                            <th>MSV/CCCD</th>
-                            <th>Giới tính</th>
-                            <th>Năm sinh</th>
-                            <th>Ngày vào Đoàn</th>
-                            <th>Đơn vị</th>
-                            <th>Vai trò</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan="11" style={{textAlign: 'center'}}>Đang tải...</td></tr>
-                        ) : users.length > 0 ? (
-                            users.map(row => (
-                                <tr key={row.userId}>
-                                    <td>{row.userId}</td>
-                                    <td>{row.userName}</td>
-                                    <td>{row.fullName}</td>
-                                    <td>{row.email}</td>
-                                    <td>{row.identifyCard || '-'}</td>
-                                    <td>{getGenderLabel(row.gender)}</td>
-                                    <td>{formatDate(row.birthDate)}</td>
-                                    <td>{formatDate(row.joinDate)}</td>
-                                    <td>
-                                        {row.unitBrand 
-                                            ? row.unitBrand.unit?.title
-                                            : 'Chưa cập nhật'}
-                                    </td>
-                                    <td>{row.roleName || 'Chưa gán'}</td>
-                                    <td className="actions-cell">
-                                        <Link to={`/users/edit/${row.userId}`} className="btn-edit" title="Sửa">Sửa</Link>
-                                        {row.isAdmin !== 1 && (
-                                            <button className="btn-delete" title="Xóa" onClick={() => handleDelete(row.userId, row.fullName)}>Xóa</button>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr><td colSpan="11" style={{textAlign: 'center'}}>Không có người dùng nào</td></tr>
-                        )}
-                    </tbody>
-                </table>
+            <div className="table-card">
+                <div className="table-toolbar">
+                    <div className="search-box">
+                        <input type="text" placeholder="Tìm kiếm người dùng..." className="search-input" />
+                    </div>
+                    <div className="actions-bar">
+                        <Link to="/users/import" className="btn-secondary-outline">
+                            Import Excel
+                        </Link>
+                        <Link to="/users/add" className="btn-primary-gradient">
+                            Thêm người dùng mới
+                        </Link>
+                    </div>
+                </div>
+
+                <div className="table-responsive">
+                    <table className="modern-data-table">
+                        <thead>
+                            <tr>
+                                <th>#ID</th>
+                                <th>Thông tin tài khoản</th>
+                                <th>Giới tính</th>
+                                <th>Ngày sinh</th>
+                                <th>Đơn vị - Phân quyền</th>
+                                <th className="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr><td colSpan="6" className="text-center loading-cell" style={{ padding: '30px' }}>Đang tải dữ liệu...</td></tr>
+                            ) : currentUsers.length > 0 ? (
+                                currentUsers.map(row => (
+                                    <tr key={row.userId} className="table-row">
+                                        <td><span className="id-badge">{row.userId}</span></td>
+                                        <td>
+                                            <div className="user-info-cell">
+                                                <div className="fw-bold text-dark">{row.fullName}</div>
+                                                <div className="text-muted small">ID: {row.userName} | {row.email}</div>
+                                                <div className="text-muted small">CCCD: {row.identifyCard || '---'}</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span className={`gender-badge ${row.gender === 1 ? 'male' : row.gender === 0 ? 'female' : 'unknown'}`}>
+                                                {getGenderLabel(row.gender)}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div className="date-cell">
+                                                <div className="fw-bold text-dark">{formatDate(row.birthDate) || '---'}</div>
+                                                <div className="text-muted small">Đoàn viên: {formatDate(row.joinDate) || '---'}</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className="unit-role-cell">
+                                                <div className="unit-name text-primary-dark">
+                                                    {row.unitBrand ? row.unitBrand.unit?.title : 'Chưa cập nhật khối/đơn vị'}
+                                                </div>
+                                                <span className={`role-badge ${row.isAdmin === 1 ? 'admin' : 'member'}`}>
+                                                    {row.roleName || 'Đoàn viên'}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="actions-cell text-center">
+                                            <Link to={`/users/edit/${row.userId}`} className="action-btn edit-btn" title="Chỉnh sửa">
+                                                Sửa
+                                            </Link>
+                                            {row.isAdmin !== 1 && (
+                                                <button className="action-btn delete-btn" title="Xóa" onClick={() => handleDelete(row.userId, row.fullName)}>
+                                                    Xóa
+                                                </button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr><td colSpan="6" className="text-center empty-cell" style={{ padding: '30px' }}>Không tìm thấy người dùng nào</td></tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={users.length}
+                    pageSize={pageSize}
+                    onPageChange={setCurrentPage}
+                />
             </div>
         </div>
     );

@@ -3,10 +3,12 @@ import useAuthStore from '../../store/authStore';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import './Units.scss';
+import { useToast } from '../../components/Common/ToastNotification';
 
 const Units = () => {
     const { user } = useAuthStore();
     const [units, setUnits] = useState([]);
+    const { toast } = useToast();
 
     useEffect(() => {
         const fetchTree = async () => {
@@ -39,10 +41,11 @@ const Units = () => {
                 }
             } catch(e) {
                 console.error(e);
+                toast.error("Lỗi khi tải cấu trúc tổ chức");
             }
         };
         fetchTree();
-    }, []);
+    }, [toast]);
 
     const iconBrand = (brand) => {
         const b = brand.toLowerCase();
@@ -55,17 +58,22 @@ const Units = () => {
     const renderNode = (node) => {
         return (
             <li key={node.ub_id}>
-                {iconBrand(node.brand)} <b>{node.unit_title}</b> <span style={{color: 'gray'}}>({node.brand})</span>
-                
-                {node.brand === "Trường" && (
-                    <Link className="btn-small green" to={`/units/add?brand=Khoa&parent_ub_id=${node.ub_id}`}>Thêm Khoa</Link>
-                )}
-                {node.brand === "Khoa" && (
-                    <Link className="btn-small blue" to={`/units/add?brand=Chi%20đoàn&parent_ub_id=${node.ub_id}`}>Thêm Chi đoàn</Link>
-                )}
-                
-                <Link className="btn-small orange" to={`/units/edit/${node.ub_id}`}>Sửa</Link>
-                <a className="btn-small red" href="#" onClick={(e) => { e.preventDefault(); alert('Xóa'); }}>Xóa</a>
+                <div className="node-content">
+                    <div className="node-icon">{iconBrand(node.brand)}</div>
+                    <span className="node-title">{node.unit_title}</span>
+                    <span className="node-brand">{node.brand}</span>
+                    
+                    <div className="node-actions">
+                        {node.brand === "Trường" && (
+                            <Link className="btn-add-unit" to={`/units/add?brand=Khoa&parent_ub_id=${node.ub_id}`}>Thêm Khoa</Link>
+                        )}
+                        {node.brand === "Khoa" && (
+                            <Link className="btn-add-unit" to={`/units/add?brand=Chi%20đoàn&parent_ub_id=${node.ub_id}`}>Thêm Chi đoàn</Link>
+                        )}
+                        <Link className="btn-edit-unit" to={`/units/edit/${node.ub_id}`}>Sửa</Link>
+                        <a className="btn-delete-unit" href="#" onClick={(e) => { e.preventDefault(); toast.info('Chức năng xóa đơn vị đang phát triển.'); }}>Xóa</a>
+                    </div>
+                </div>
                 
                 {node.children && node.children.length > 0 && (
                     <ul>
@@ -82,14 +90,23 @@ const Units = () => {
 
     return (
         <div className="container">
-            <h2 style={{textAlign: 'center', marginBottom: '20px'}}>Cấu hình tổ chức</h2>
-            <div className="actions" style={{marginBottom: '20px'}}>
-                <Link to="/units/add?brand=Trường" className="btn-add">Thêm Trường</Link>
+            <div className="page-header">
+                <h2>Cấu hình tổ chức</h2>
+                <p>Quản lý biểu đồ phân cấp tổ chức (Trường - Khoa - Chi đoàn)</p>
             </div>
-            <div className="tree-container">
-                <ul>
-                    {units.map(u => renderNode(u))}
-                </ul>
+            
+            <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '20px' }}>
+                <Link to="/units/add?brand=Trường" className="btn-primary" style={{ padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', color: 'white' }}>
+                    <i className="ri-add-line" style={{ marginRight: '8px' }}></i> Thêm Trường
+                </Link>
+            </div>
+
+            <div className="tree-card">
+                <div className="tree-container">
+                    <ul>
+                        {units.map(u => renderNode(u))}
+                    </ul>
+                </div>
             </div>
         </div>
     );
