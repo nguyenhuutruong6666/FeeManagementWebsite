@@ -17,6 +17,7 @@ export const authenticate = async (req, res, next) => {
       select: {
         userId: true, userName: true, fullName: true, email: true,
         roleName: true, isAdmin: true, unitId: true,
+        identifyCard: true, gender: true, birthDate: true, joinDate: true,
         unitBrand: { include: { unit: true, brand: true } },
       },
     });

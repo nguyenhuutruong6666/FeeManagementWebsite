@@ -10,55 +10,97 @@ const Profile = () => {
     const [profile, setProfile] = useState(null);
 
     useEffect(() => {
-        // Just use user context for now, or fetch from /auth/me for fresh data
         const fetchProfile = async () => {
-            const res = await api.get('/auth/me');
-            if (res.success) {
-                setProfile(res.data);
+            try {
+                const res = await api.get('/auth/me');
+                if (res.success) {
+                    setProfile(res.data);
+                }
+            } catch (error) {
+                console.error("Failed to load profile", error);
             }
         };
         fetchProfile();
     }, []);
 
-    if (!profile) return <div className="container">Đang tải...</div>;
+    if (!profile) return <div className="container"><div className="loading-spinner">Đang tải...</div></div>;
 
     return (
         <div className="container">
-            <h2>Thông tin tài khoản</h2>
-            <div className="profile-card">
-                <div className="profile-header">
-                    <div className="avatar">
-                        <img src="/user.png" alt="avatar" style={{width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', background: '#e2e8f0'}} />
-                    </div>
-                    <div className="info">
-                        <h3>{profile.fullName}</h3>
-                        <p><b>Vai trò:</b> {profile.roleName || 'Chưa gán'}</p>
-                        <p><b>Khối:</b> {profile.unitBrand?.brand?.title || 'Chưa cập nhật'}</p>
-                        <p><b>Đơn vị:</b> {profile.unitBrand?.unit?.title || 'Chưa cập nhật'}</p>
-                        <p><b>Trạng thái:</b> {profile.isAdmin === 1 ? 'Quản trị viên' : 'Hoạt động'}</p>
+            <div className="page-header">
+                <h2>Thông tin tài khoản</h2>
+                <p>Quản lý thông tin cá nhân và bảo mật của bạn</p>
+            </div>
+
+            <div className="profile-wrapper">
+                <div className="profile-sidebar">
+                    <div className="profile-avatar-card">
+                        <div className="avatar-wrapper">
+                            <img src="/user.png" alt="avatar" className="avatar-img" />
+                            <div className="status-indicator active"></div>
+                        </div>
+                        <h3 className="profile-name">{profile.fullName}</h3>
+                        <p className="profile-role">{profile.roleName || 'Đoàn viên'}</p>
+                        
+                        <div className="profile-badges">
+                            {profile.isAdmin === 1 && <span className="badge admin-badge">Quản trị viên</span>}
+                            <span className="badge unit-badge">{profile.unitBrand?.brand?.title || 'Khối'}</span>
+                        </div>
+
+                        <div className="profile-quick-info">
+                            <div className="info-item">
+                                <span className="icon">✉️</span>
+                                <span>{profile.email}</span>
+                            </div>
+                            <div className="info-item">
+                                <span className="icon">🏢</span>
+                                <span>{profile.unitBrand?.unit?.title || 'Chưa cập nhật'}</span>
+                            </div>
+                        </div>
+
+                        <div className="profile-actions-sidebar">
+                            <Link to={`/users/edit/${user?.userId}`} className="btn-edit-profile">
+                                Chỉnh sửa thông tin
+                            </Link>
+                            <Link to="/profile/changepassword" className="btn-change-password">
+                                Đổi mật khẩu
+                            </Link>
+                        </div>
                     </div>
                 </div>
 
-                <div className="profile-body">
-                    <table className="table profile-table">
-                        <tbody>
-                            <tr><th>Tên đăng nhập:</th><td>{profile.userName}</td></tr>
-                            <tr><th>Họ và tên:</th><td>{profile.fullName}</td></tr>
-                            <tr><th>Email:</th><td>{profile.email}</td></tr>
-                            <tr><th>CCCD/MSV:</th><td>{profile.identifyCard}</td></tr>
-                            <tr><th>Ngày sinh:</th><td>{formatDate(profile.birthDate)}</td></tr>
-                            <tr><th>Giới tính:</th><td>{getGenderLabel(profile.gender)}</td></tr>
-                            <tr><th>Ngày vào Đoàn:</th><td>{formatDate(profile.joinDate)}</td></tr>
-                            <tr><th>Vai trò:</th><td>{profile.roleName}</td></tr>
-                            <tr><th>Đơn vị:</th><td>{profile.unitBrand?.unit?.title}</td></tr>
-                            <tr><th>Thuộc khối:</th><td>{profile.unitBrand?.brand?.title}</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div className="profile-footer">
-                    <Link to={`/users/edit/${user?.userId}`} className="btn-edit">Chỉnh sửa thông tin</Link>
-                    <Link to="/profile/changepassword" className="btn-delete">Đổi mật khẩu</Link>
+                <div className="profile-main-content">
+                    <div className="content-card">
+                        <div className="card-header">
+                            <h3>Chi tiết tài khoản</h3>
+                        </div>
+                        <div className="details-grid">
+                            <div className="detail-group">
+                                <label>Tên đăng nhập</label>
+                                <div className="detail-value">{profile.userName}</div>
+                            </div>
+                            <div className="detail-group">
+                                <label>Email</label>
+                                <div className="detail-value">{profile.email}</div>
+                            </div>
+                            <div className="detail-group">
+                                <label>CCCD/MSV</label>
+                                <div className="detail-value">{profile.identifyCard || '---'}</div>
+                            </div>
+                            <div className="detail-group">
+                                <label>Giới tính</label>
+                                <div className="detail-value">{getGenderLabel(profile.gender)}</div>
+                            </div>
+                            <div className="detail-group">
+                                <label>Ngày sinh</label>
+                                <div className="detail-value">{formatDate(profile.birthDate) || '---'}</div>
+                            </div>
+                            <div className="detail-group">
+                                <label>Ngày vào Đoàn</label>
+                                <div className="detail-value">{formatDate(profile.joinDate) || '---'}</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
