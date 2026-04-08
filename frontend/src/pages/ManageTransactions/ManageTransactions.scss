@@ -1,13 +1,165 @@
-.search-form { margin-bottom: 20px; display: flex; gap: 10px; }
-.search-form input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; flex: 1; max-width: 300px; }
-.btn-search { background: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; }
-.btn-reset { background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; }
+@import '../../styles/variables';
 
-.status.success { color: #28a745; font-weight: bold; }
-.status.pending { color: #ffc107; font-weight: bold; }
-.status.failed { color: #dc3545; font-weight: bold; }
-.status.canceled { color: #6c757d; font-weight: bold; }
+.data-table-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: $shadow-sm;
+    padding: 24px;
+    margin-top: 20px;
+    border: 1px solid $border-color;
+}
 
-.inline-form { display: flex; gap: 5px; }
-.status-select { padding: 5px; border-radius: 4px; border: 1px solid #ccc; }
-.btn-update { background: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+.search-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+
+    .search-form {
+        display: flex;
+        gap: 10px;
+
+        .search-input {
+            padding: 10px 16px;
+            border: 1px solid $border-color;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            width: 300px;
+            outline: none;
+            transition: $transition-fast;
+
+            &:focus {
+                border-color: $primary;
+                box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+            }
+        }
+
+        .btn-search {
+            background: $primary;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: $transition-fast;
+
+            &:hover { background: $primary-dark; }
+        }
+
+        .btn-reset {
+            background: #e2e8f0;
+            color: $text-main;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: $transition-fast;
+
+            &:hover { background: #cbd5e1; }
+        }
+    }
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid $border-color;
+    
+    &::-webkit-scrollbar { height: 8px; }
+    &::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+    &::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+        padding: 12px 10px;
+        text-align: left;
+        border-bottom: 1px solid $border-color;
+        font-size: 0.9rem;
+        word-break: break-word;
+
+        /* Make actions column sticky */
+        &:last-child {
+            position: sticky;
+            right: 0;
+            background: #fff;
+            border-left: 1px solid $border-color;
+            z-index: 10;
+        }
+    }
+
+    th {
+        background: #f8fafc;
+        font-weight: 600;
+        color: $text-muted;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        
+        &:last-child {
+            background: #f8fafc;
+            z-index: 11;
+        }
+    }
+
+    tbody tr {
+        transition: $transition-fast;
+        &:hover { 
+            background-color: #f8fafc; 
+            td:last-child {
+                background-color: #f8fafc;
+            }
+        }
+        &:last-child td { border-bottom: none; }
+    }
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+
+    &.status-success { background: #dcfce7; color: #166534; }
+    &.status-pending { background: #fef9c3; color: #854d0e; }
+    &.status-failed, &.status-canceled { background: #fee2e2; color: #991b1b; }
+    &.status-needreview { background: #ffedd5; color: #9a3412; }
+}
+
+.inline-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    .status-select {
+        padding: 6px 10px;
+        border: 1px solid $border-color;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        outline: none;
+        background: white;
+
+        &:focus {
+            border-color: $primary;
+        }
+    }
+
+    .btn-update {
+        background: $success;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-fast;
+
+        &:hover { background: $success-dark; }
+    }
+}

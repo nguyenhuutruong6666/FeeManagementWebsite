@@ -44,7 +44,6 @@ const Pagination = ({
                     disabled={!canGoPrev}
                     aria-label="Trang trước"
                 >
-                    <i className="ri-arrow-left-s-line"></i>
                     Trước
                 </button>
 
@@ -59,7 +58,6 @@ const Pagination = ({
                     aria-label="Trang sau"
                 >
                     Sau
-                    <i className="ri-arrow-right-s-line"></i>
                 </button>
             </div>
         </div>

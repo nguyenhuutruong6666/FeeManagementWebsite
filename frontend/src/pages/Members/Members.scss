@@ -1,10 +1,178 @@
 @import '../../styles/variables';
 
-.members-container, .users-container {
-  .actions-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.data-table-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: $shadow-sm;
+    padding: 24px;
+    margin-top: 20px;
+    border: 1px solid $border-color;
+}
+
+.search-toolbar {
     margin-bottom: 20px;
-  }
+}
+
+.filter-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+    background: #f8fafc;
+    padding: 16px 20px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+
+    .filter-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 200px;
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: $text-main;
+        }
+
+        .form-control {
+            padding: 10px 14px;
+            border: 1px solid $border-color;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: $transition-fast;
+
+            &:focus {
+                border-color: $primary;
+                box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+            }
+        }
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 10px;
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: $transition-fast;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: $primary;
+            color: white;
+            &:hover { background: $primary-dark; }
+        }
+
+        .btn-reset {
+            background: #e2e8f0;
+            color: $text-main;
+            &:hover { background: #cbd5e1; }
+        }
+    }
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid $border-color;
+    
+    &::-webkit-scrollbar {
+        height: 8px;
+    }
+    &::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+        padding: 12px 10px;
+        text-align: left;
+        border-bottom: 1px solid $border-color;
+        font-size: 0.9rem;
+        word-break: break-word;
+
+        &:last-child {
+            position: sticky;
+            right: 0;
+            background: #fff;
+            border-left: 1px solid $border-color;
+            z-index: 10;
+        }
+    }
+
+    th {
+        background: #f8fafc;
+        font-weight: 600;
+        color: $text-muted;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        
+        &:last-child {
+            background: #f8fafc;
+            z-index: 11;
+        }
+    }
+
+    tbody tr {
+        transition: $transition-fast;
+        
+        &:hover {
+            background-color: #f8fafc;
+            td:last-child {
+                background-color: #f8fafc;
+            }
+        }
+        
+        &:last-child td {
+            border-bottom: none;
+        }
+    }
+}
+
+.role-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+
+    &.role-admin { background: #fee2e2; color: #ef4444; }
+    &.role-bch { background: #e0e7ff; color: #4f46e5; }
+    &.role-bch-truong { background: #dbeafe; color: #2563eb; }
+    &.role-bch-khoa { background: #e0e7ff; color: #4338ca; }
+    &.role-bch-chidoan { background: #f3e8ff; color: #7e22ce; }
+    &.role-member { background: #f1f5f9; color: #64748b; }
+}
+
+.btn-delete-modern {
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: $transition-fast;
+
+    &:hover {
+        background: #fecaca;
+    }
 }

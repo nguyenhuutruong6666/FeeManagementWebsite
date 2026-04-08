@@ -4,9 +4,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 25px;
-  background: #f8fafc;
-  border-top: 1px solid $border-color;
+  padding: 16px 24px;
+  background: white;
+  border-top: 1px solid #e2e8f0;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  margin-top: 15px; // Add some gap after table wrapper
   
   @media (max-width: 600px) {
     flex-direction: column;
@@ -15,59 +18,54 @@
 
   &__info {
     font-size: 0.9rem;
-    color: $text-light;
+    color: #64748b;
     
     strong {
-      color: $text-main;
-      font-weight: 600;
+      color: #0f172a;
+      font-weight: 700;
     }
   }
 
   &__controls {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 8px;
   }
 
   &__current {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: $primary-dark;
+    color: #0284c7; // blue primary text
     background: white;
-    padding: 6px 12px;
+    padding: 6px 14px;
     border-radius: 6px;
-    border: 1px solid $border-color;
+    border: 1px solid #e2e8f0;
   }
 
   &__btn {
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 8px 16px;
+    justify-content: center;
+    padding: 6px 14px;
     background: white;
-    border: 1px solid $border-color;
+    border: 1px solid #e2e8f0;
     border-radius: 6px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: $text-main;
+    color: #0f172a; // solid black text
     cursor: pointer;
     transition: $transition-fast;
     
     &:hover:not(:disabled) {
-      background: $primary-light;
-      color: $primary-dark;
-      border-color: #bae6fd;
+      background: #f8fafc;
+      border-color: #cbd5e1;
     }
     
     &:disabled {
-      background: #f1f5f9;
-      color: #cbd5e1;
+      background: #f8fafc;
+      color: #94a3b8;
       cursor: not-allowed;
       border-color: #e2e8f0;
-    }
-    
-    i {
-      font-size: 1.1rem;
     }
   }
 }
