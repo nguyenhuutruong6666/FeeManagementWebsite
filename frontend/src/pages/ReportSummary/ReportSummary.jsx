@@ -10,7 +10,7 @@ const ReportSummary = () => {
     const [summary, setSummary] = useState(null);
 
     useEffect(() => {
-        // Mock data representing the UI
+
         setSummary({
             total_members: 150,
             paid_members: 120,
@@ -33,7 +33,7 @@ const ReportSummary = () => {
     const year = new Date().getFullYear();
     const collectionRate = summary.total_members ? Math.round((summary.paid_members / summary.total_members) * 100) : 0;
     
-    // Circle math
+
     const radius = 60;
     const circumference = 2 * Math.PI * radius;
     const dashoffset = circumference - (collectionRate / 100) * circumference;

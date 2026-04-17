@@ -13,46 +13,54 @@
 .tree-container {
     ul {
         list-style-type: none;
-        padding-left: 20px;
+        padding-left: 32px;
         position: relative;
+        margin: 0;
 
-        &::before {
+        &.node-children-list::before {
             content: '';
-            border-left: 2px dashed #cbd5e1;
             position: absolute;
             top: 0;
             bottom: 0;
-            left: -10px;
+            left: 16px;
+            border-left: 2px solid #e2e8f0;
+            z-index: 1;
         }
     }
 
-    /* Remove dashed line for top-level */
     > ul {
         padding-left: 0;
         &::before { display: none; }
     }
 
     li {
-        margin: 15px 0;
+        margin: 12px 0;
         position: relative;
-        padding-left: 15px;
 
         &::before {
             content: '';
             position: absolute;
-            top: 15px;
-            left: -30px;
-            width: 30px;
-            border-top: 2px dashed #cbd5e1;
+            top: 28px;
+            left: -16px;
+            width: 16px;
+            border-top: 2px solid #e2e8f0;
+            z-index: 1;
+        }
+        
+        &:last-child::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            bottom: 0;
+            left: -17px;
+            width: 4px;
+            background: white;
+            z-index: 2;
         }
 
-        /* Top level list items don't need horizontal dashes */
-        .tree-container > ul > &::before {
+        .tree-container > ul > &::before,
+        .tree-container > ul > &::after {
             display: none;
-        }
-        .tree-container > ul > & {
-            padding-left: 0;
-            margin-top: 20px;
         }
     }
 
@@ -62,15 +70,46 @@
         flex-wrap: wrap;
         gap: 12px;
         background: #f8fafc;
-        padding: 10px 16px;
-        border-radius: 8px;
+        padding: 10px 18px 10px 10px;
+        border-radius: 10px;
         border: 1px solid #e2e8f0;
-        transition: $transition-fast;
+        transition: all 0.2s ease;
+        position: relative;
+        z-index: 3;
 
         &:hover {
             background: white;
-            box-shadow: $shadow-sm;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
             border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            padding: 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            transition: all 0.2s;
+
+            i {
+                font-size: 1.4rem;
+                line-height: 1;
+            }
+
+            &:hover {
+                background: #e2e8f0;
+                color: #0f172a;
+            }
+        }
+
+        .toggle-placeholder {
+            width: 30px;
+            height: 30px;
         }
 
         .node-icon {
@@ -78,32 +117,34 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .node-title {
             font-weight: 600;
             color: $text-main;
-            font-size: 1rem;
+            font-size: 1.05rem;
         }
 
         .node-brand {
-            font-size: 0.85rem;
-            color: $text-light;
-            background: #e2e8f0;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-weight: 500;
+            font-size: 0.8rem;
+            color: $primary;
+            background: #e0f2fe;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
         }
 
         .node-actions {
             display: flex;
             gap: 8px;
-            margin-left: 10px;
+            margin-left: 20px;
+            opacity: 0.5;
+            transition: opacity 0.2s;
 
             a {
                 padding: 6px 12px;
@@ -111,14 +152,15 @@
                 border-radius: 6px;
                 font-weight: 600;
                 text-decoration: none;
-                transition: $transition-fast;
+                transition: all 0.2s;
                 display: inline-flex;
                 align-items: center;
 
                 &.btn-add-unit {
-                    background: #dbeafe;
-                    color: $primary;
-                    &:hover { background: #bfdbfe; }
+                    background: #f1f5f9;
+                    color: #475569;
+                    border: 1px solid #cbd5e1;
+                    &:hover { background: #e2e8f0; color: #0f172a; }
                 }
                 
                 &.btn-edit-unit {
@@ -133,6 +175,10 @@
                     &:hover { background: #fecaca; }
                 }
             }
+        }
+
+        &:hover .node-actions {
+            opacity: 1;
         }
     }
 }

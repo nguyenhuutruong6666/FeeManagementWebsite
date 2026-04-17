@@ -8,6 +8,7 @@ import { useToast } from '../../components/Common/ToastNotification';
 const Units = () => {
     const { user } = useAuthStore();
     const [units, setUnits] = useState([]);
+    const [expandedNodes, setExpandedNodes] = useState({});
     const { toast } = useToast();
 
     useEffect(() => {
@@ -27,7 +28,9 @@ const Units = () => {
                     data.forEach(node => { map[node.id] = node; });
                     
                     const roots = [];
+                    const initialExpanded = {};
                     data.forEach(node => {
+                        initialExpanded[node.ub_id] = true;
                         if (node.parentUnitId) {
                             if (map[node.parentUnitId]) {
                                 map[node.parentUnitId].children.push(node);
@@ -37,6 +40,7 @@ const Units = () => {
                         }
                     });
                     
+                    setExpandedNodes(initialExpanded);
                     setUnits(roots);
                 }
             } catch(e) {
@@ -47,6 +51,13 @@ const Units = () => {
         fetchTree();
     }, [toast]);
 
+    const toggleExpand = (id) => {
+        setExpandedNodes(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    };
+
     const iconBrand = (brand) => {
         const b = brand.toLowerCase();
         if (b === "trường" || b === "truong") return "🏫";
@@ -56,9 +67,23 @@ const Units = () => {
     };
 
     const renderNode = (node) => {
+        const hasChildren = node.children && node.children.length > 0;
+        const isExpanded = expandedNodes[node.ub_id];
+
         return (
-            <li key={node.ub_id}>
+            <li key={node.ub_id} className={hasChildren ? 'has-children' : ''}>
                 <div className="node-content">
+                    {hasChildren ? (
+                        <button 
+                            className={`toggle-btn ${isExpanded ? 'expanded' : ''}`} 
+                            onClick={() => toggleExpand(node.ub_id)}
+                            aria-label={isExpanded ? 'Thu gọn' : 'Mở rộng'}
+                        >
+                            <i className={isExpanded ? "ri-arrow-down-s-line" : "ri-arrow-right-s-line"}></i>
+                        </button>
+                    ) : (
+                        <span className="toggle-placeholder"></span>
+                    )}
                     <div className="node-icon">{iconBrand(node.brand)}</div>
                     <span className="node-title">{node.unit_title}</span>
                     <span className="node-brand">{node.brand}</span>
@@ -75,8 +100,8 @@ const Units = () => {
                     </div>
                 </div>
                 
-                {node.children && node.children.length > 0 && (
-                    <ul>
+                {hasChildren && isExpanded && (
+                    <ul className="node-children-list">
                         {node.children.map(child => renderNode(child))}
                     </ul>
                 )}

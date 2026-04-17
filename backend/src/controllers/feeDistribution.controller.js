@@ -17,6 +17,6 @@ export const getDistributions = async (req, res) => {
 };
 
 export const createDistribution = async (req, res) => {
-    // Logic for transferring funds between levels based on rulesJson
+
     return sendSuccess(res, null, 'Phân bổ thành công.');
 };

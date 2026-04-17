@@ -32,13 +32,13 @@ export const createPayment = async (req, res) => {
 
     if (method === 'Cash') {
       if (payment.collectorId) {
-        // Auto confirm if creator is BCH/Admin
+
         await confirmCashPaymentLogic(payment.id, payment.collectorId);
         return sendSuccess(res, payment, 'Nộp tiền mặt thành công (Được BCH xác nhận tự động).');
       }
       return sendSuccess(res, payment, 'Đã ghi nhận nộp tiền mặt. Đang chờ BCH Chi đoàn xác nhận.');
     } else if (method === 'VNPAY') {
-      // VNPay integration logic would go here. For now returning payment info
+
       const paymentUrl = `${process.env.VNPAY_URL}?vnp_TxnRef=${transactionCode}&vnp_Amount=${amount*100}`;
       return sendSuccess(res, { paymentUrl }, 'Chuyển hướng đến VNPay...');
     }
@@ -89,6 +89,6 @@ export const confirmCashPayment = async (req, res) => {
 };
 
 export const vnpayIpn = async (req, res) => {
-    // VNPay webhook handler mapping
+
     return sendSuccess(res, null, 'Ghi nhận IPN.');
 };

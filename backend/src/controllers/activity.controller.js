@@ -54,11 +54,11 @@ export const createActivity = async (req, res) => {
 };
 
 export const approveActivity = async (req, res) => {
-  // Approve logic
+
   return sendSuccess(res, null, 'Phê duyệt thành công!');
 };
 
 export const uploadVoucher = async (req, res) => {
-  // Upload logic
+
   return sendSuccess(res, null, 'Đã tải lên chứng từ.');
 };

@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Bắt đầu seed dữ liệu...');
 
-  // ==================== UNITS ====================
+
   const units = await Promise.all([
     prisma.unit.upsert({ where: { id: 1 }, update: {}, create: { id: 1, title: 'Trường Đại học Sư phạm Hà Nội' } }),
     prisma.unit.upsert({ where: { id: 2 }, update: {}, create: { id: 2, title: 'Khoa CNTT' } }),
@@ -27,7 +27,7 @@ async function main() {
   ]);
   console.log(`✅ Đã tạo ${units.length} units`);
 
-  // ==================== BRANDS ====================
+
   await Promise.all([
     prisma.brand.upsert({ where: { id: 1 }, update: {}, create: { id: 1, title: 'Trường' } }),
     prisma.brand.upsert({ where: { id: 2 }, update: {}, create: { id: 2, title: 'Khoa' } }),
@@ -35,7 +35,7 @@ async function main() {
   ]);
   console.log('✅ Đã tạo 3 brands');
 
-  // ==================== UNIT_BRAND ====================
+
   const unitBrandData = [
     { id: 1, brandId: 1, unitId: 1, parentUnitId: null },
     { id: 2, brandId: 2, unitId: 2, parentUnitId: 1 },
@@ -59,7 +59,7 @@ async function main() {
   }
   console.log('✅ Đã tạo 16 unit_brands');
 
-  // ==================== USERS ====================
+
   const hashedPassword = await bcrypt.hash('123456', 10);
   const usersData = [
     { userId: 1, userName: 'admin', fullName: 'Administrator', gender: 1, identifyCard: '100000001', email: 'admin@gmail.com', password: hashedPassword, birthDate: new Date('1975-06-06'), joinDate: new Date('2000-06-06'), roleName: 'Quản trị viên', isAdmin: 1, unitId: 1 },
@@ -82,7 +82,7 @@ async function main() {
   }
   console.log(`✅ Đã tạo ${usersData.length} users`);
 
-  // ==================== FEE POLICY ====================
+
   await prisma.feePolicy.upsert({
     where: { id: 13 },
     update: {},
@@ -99,7 +99,7 @@ async function main() {
   });
   console.log('✅ Đã tạo fee_policy');
 
-  // ==================== FEE OBLIGATION ====================
+
   await prisma.feeObligation.upsert({
     where: { id: 965 },
     update: {},
@@ -118,7 +118,7 @@ async function main() {
   });
   console.log('✅ Đã tạo fee_obligations mẫu');
 
-  // ==================== ACTIVITY PROPOSAL ====================
+
   await prisma.activityProposal.upsert({
     where: { id: 19 },
     update: {},
@@ -140,7 +140,7 @@ async function main() {
   });
   console.log('✅ Đã tạo activity_proposal mẫu');
 
-  // ==================== FEE CASHBOOK ====================
+
   await prisma.feeCashbook.upsert({
     where: { id: 60 },
     update: {},
@@ -157,7 +157,7 @@ async function main() {
   });
   console.log('✅ Đã tạo fee_cashbook mẫu');
 
-  // ==================== FEE SUMMARY ====================
+
   await prisma.feeSummary.upsert({
     where: { id: 5 },
     update: {},

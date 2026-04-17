@@ -8,7 +8,7 @@ export const getReportSummary = async (req, res) => {
 
     let whereUnitId = unitId;
 
-    // Use current logic from report_summary.php to calculate data or fetch from feeSummary (we seed feeSummary mostly for this)
+
     const summary = await prisma.feeSummary.findFirst({
         where: { unitId: whereUnitId, year }
     });
@@ -16,8 +16,8 @@ export const getReportSummary = async (req, res) => {
     if (summary) {
         return sendSuccess(res, summary);
     } else {
-        // Compute dynamically if not in summary table
-        // For now, return a default zero summary to avoid errors
+
+
         return sendSuccess(res, {
             totalMembers: 0, paidMembers: 0, unpaidMembers: 0,
             totalActivities: 0, approvedActivities: 0, activeActivities: 0,

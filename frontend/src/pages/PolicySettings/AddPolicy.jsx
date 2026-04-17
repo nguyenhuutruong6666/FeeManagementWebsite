@@ -21,7 +21,7 @@ const AddPolicy = () => {
         try {
             const submitData = { ...formData };
             if (submitData.exemptions) {
-               // Verify valid JSON
+
                JSON.parse(submitData.exemptions);
             }
             const res = await api.post('/fee-policies', submitData);

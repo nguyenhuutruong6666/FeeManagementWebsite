@@ -3,7 +3,7 @@ import useAuthStore from './store/authStore';
 import { useEffect } from 'react';
 import Layout from './components/Layout/Layout';
 
-// Pages
+
 import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Members from './pages/Members/Members';
@@ -18,7 +18,7 @@ import ActivityManagement from './pages/ActivityManagement/ActivityManagement';
 import ReportSummary from './pages/ReportSummary/ReportSummary';
 import GenerateFeeObligation from './pages/GenerateFeeObligation/GenerateFeeObligation';
 
-// Forms and Sub-pages
+
 import AddUser from './pages/Users/AddUser';
 import EditUser from './pages/Users/EditUser';
 import ImportUsers from './pages/Users/ImportUsers';
@@ -73,7 +73,7 @@ const ProtectedRoute = ({ children, requiredRoles }) => {
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   
   if (requiredRoles && user.isAdmin !== 1 && !requiredRoles.includes(user.roleName)) {
-      return <Navigate to="/" replace />; // fallback to dashboard if not allowed
+      return <Navigate to="/" replace />;
   }
 
   return <Layout>{children}</Layout>;

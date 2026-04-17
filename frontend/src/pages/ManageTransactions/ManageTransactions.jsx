@@ -16,7 +16,7 @@ const ManageTransactions = () => {
     const { toast } = useToast();
 
     useEffect(() => {
-        // Mock data representing the UI
+
         setTransactions([
             { id: 1, transaction_code: 'TXN-ABC123XYZ', payer_name: 'Nguyễn Văn A', unit_title: 'K72E1', brand_title: 'Chi đoàn', period_label: 'Học kỳ', amount: 24000, payment_method: 'Tiền mặt', payment_date: '2024-05-15T10:30:00Z', status: 'Success' },
             { id: 2, transaction_code: 'TXN-XYZ987', payer_name: 'Trần Thị B', unit_title: 'K72E1', brand_title: 'Chi đoàn', period_label: 'Học kỳ', amount: 24000, payment_method: 'VNPAY', payment_date: '2024-05-14T09:15:00Z', status: 'Pending' }

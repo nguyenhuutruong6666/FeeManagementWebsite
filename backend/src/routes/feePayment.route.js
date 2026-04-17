@@ -6,7 +6,7 @@ import { paymentValidation } from '../validation/fee.validation.js';
 
 const router = express.Router();
 
-// Webhook for VNPay does not require authentication
+
 router.post('/vnpay-ipn', vnpayIpn);
 
 router.use(authenticate);

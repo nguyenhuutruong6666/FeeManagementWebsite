@@ -10,8 +10,8 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    // We will retrieve the token from zustand state by importing it
-    // To avoid circular dependency during init, we parse localStorage
+
+
     const authStorage = localStorage.getItem('auth-storage');
     if (authStorage) {
       try {
@@ -31,9 +31,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    // Handle global errors like 401 Unauthorized here
+
     if (error.response && error.response.status === 401) {
-        // use authStore logout method
+
     }
     return Promise.reject(error.response?.data || { message: 'Lỗi kết nối máy chủ' });
   }

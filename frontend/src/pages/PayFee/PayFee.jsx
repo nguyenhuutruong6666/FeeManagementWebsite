@@ -8,10 +8,10 @@ const PayFee = () => {
     const { user } = useAuthStore();
     const [obligations, setObligations] = useState([]);
     
-    // In a real flow, use useEffect to fetch from /api/members/me/obligations
+
     useEffect(() => {
         const fetchObligations = async () => {
-            // Mock data representing the UI
+
             setObligations([
                 {
                     id: 1, policyName: 'Đoàn phí Học kỳ 1 2023-2024',

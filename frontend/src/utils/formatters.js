@@ -4,7 +4,7 @@ export const formatCurrency = (amount) => {
 
 export const formatDate = (dateString) => {
     if (!dateString) return '-';
-    // Handle dd/mm/yyyy
+
     const date = new Date(dateString);
     if(isNaN(date.getTime())) return dateString;
     

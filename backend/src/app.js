@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Routes
+
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/members', memberRouter);

@@ -9,6 +9,7 @@ const Users = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState('');
     const pageSize = 10;
 
     useEffect(() => {
@@ -20,7 +21,7 @@ const Users = () => {
             const res = await userService.getAll();
             if (res.success) {
                 setUsers(res.data);
-                setCurrentPage(1); // Reset page on fetch
+                setCurrentPage(1);
             }
         } catch (error) {
             console.error(error);
@@ -42,20 +43,38 @@ const Users = () => {
         }
     };
 
-    // Pagination Logic
-    const currentUsers = users.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+        setCurrentPage(1);
+    };
+
+    const filteredUsers = users.filter(user =>
+        (user.fullName && user.fullName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (user.userName && user.userName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (user.identifyCard && user.identifyCard.includes(searchQuery))
+    );
+
+
+    const currentUsers = filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     return (
         <div className="container">
             <div className="page-header">
                 <h2>Quản lý người dùng</h2>
-                <p>Danh sách toàn bộ tài khoản và phân quyền trong hệ thống</p>
+                <p>Danh sách tài khoản hệ thống</p>
             </div>
 
             <div className="table-card">
                 <div className="table-toolbar">
                     <div className="search-box">
-                        <input type="text" placeholder="Tìm kiếm người dùng..." className="search-input" />
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm theo tên, ID, email..."
+                            className="search-input"
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                        />
                     </div>
                     <div className="actions-bar">
                         <Link to="/users/import" className="btn-secondary-outline">
@@ -135,7 +154,7 @@ const Users = () => {
 
                 <Pagination
                     currentPage={currentPage}
-                    totalItems={users.length}
+                    totalItems={filteredUsers.length}
                     pageSize={pageSize}
                     onPageChange={setCurrentPage}
                 />

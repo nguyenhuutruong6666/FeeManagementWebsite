@@ -36,14 +36,14 @@ export const createPolicy = async (req, res) => {
 };
 
 export const updatePolicy = async (req, res) => {
-  // ... similar logic for updating
+
 };
 
 export const activatePolicy = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     
-    // Check if another policy is active
+
     const activePolicy = await prisma.feePolicy.findFirst({ where: { status: 'Active' } });
     if (activePolicy && activePolicy.id !== id) {
       return sendError(res, 'Hiện đã có một chính sách đang hoạt động. Hãy hủy kích hoạt chính sách hiện tại trước.', 400);

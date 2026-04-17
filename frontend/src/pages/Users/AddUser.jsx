@@ -23,7 +23,7 @@ const AddUser = () => {
 
         const fetchUnits = async () => {
             try {
-                // To display units properly, we can use getBrands
+
                 const res = await api.get('/units/brands');
                 if (res.success) {
                     setUnits(res.data);

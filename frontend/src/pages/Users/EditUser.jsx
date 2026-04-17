@@ -31,7 +31,7 @@ const EditUser = () => {
                         unitId: u.unitId || '',
                         roleName: u.roleName || 'Đoàn viên',
                         isAdmin: u.isAdmin,
-                        password: '' // empty unless changing
+                        password: ''
                     });
                 }
             } catch (e) {
@@ -56,7 +56,7 @@ const EditUser = () => {
             const res = await api.put(`/users/${id}`, formData);
             if (res.success) {
                 alert('Cập nhật thông tin thành công!');
-                // Check if user is an admin editing someone else, else navigate to profile
+
                 if (user?.isAdmin === 1) navigate('/users');
                 else navigate('/profile');
             }

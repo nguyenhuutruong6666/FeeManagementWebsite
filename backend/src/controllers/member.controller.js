@@ -8,7 +8,7 @@ export const getMembers = async (req, res) => {
 
     let whereClause = {};
 
-    // Base filtering from query params
+
     if (filter_role) {
       whereClause.roleName = filter_role;
     }
@@ -16,7 +16,7 @@ export const getMembers = async (req, res) => {
       whereClause.unitId = parseInt(filter_unit);
     }
 
-    // Role-based visibility
+
     if (isAdmin !== 1 && roleName !== 'BCH Trường') {
       if (roleName === 'BCH Khoa') {
         const units = await prisma.unitBrand.findMany({
@@ -26,9 +26,9 @@ export const getMembers = async (req, res) => {
         const allowedUnitIds = units.map(u => u.id);
         whereClause.unitId = { in: allowedUnitIds };
         
-        // If filter_unit is provided, ensure it's within allowed units
+
         if (filter_unit && !allowedUnitIds.includes(parseInt(filter_unit))) {
-             return sendSuccess(res, []); // Return empty if filtering outside allowed scope
+             return sendSuccess(res, []);
         }
       } else if (roleName === 'BCH Chi đoàn') {
         whereClause.unitId = unitId;
@@ -36,7 +36,7 @@ export const getMembers = async (req, res) => {
              return sendSuccess(res, []);
         }
       } else {
-        // Đoàn viên can only see members of their own unit? The PHP code didn't allow access for them, but just in case:
+
         return sendError(res, 'Không có quyền truy cập', 403);
       }
     }

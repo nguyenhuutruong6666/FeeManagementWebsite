@@ -21,7 +21,7 @@ export const createUnit = async (req, res) => {
   }
 };
 
-// Also unit_brand fetching for the UI
+
 export const getUnitBrands = async (req, res) => {
     try {
         const unitBrands = await prisma.unitBrand.findMany({
@@ -39,10 +39,10 @@ export const createUnitBrand = async (req, res) => {
         const { unitTitle, brandId, parentUnitId } = req.body;
         if (!unitTitle || !brandId) return sendError(res, 'Thiếu thông tin bắt buộc', 400);
 
-        // 1. Create Unit first
+
         const unit = await prisma.unit.create({ data: { title: unitTitle } });
         
-        // 2. Create UnitBrand
+
         const ub = await prisma.unitBrand.create({
             data: {
                 unitId: unit.id,

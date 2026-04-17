@@ -7,7 +7,7 @@ const FeeCashbookSummary = () => {
     const { user } = useAuthStore();
     const user_role = user?.roleName;
     const unitName = user?.unitBrand?.unit?.title ? `${user.unitBrand.unit.title} (${user.unitBrand.brand?.title})` : 'Không xác định';
-    const current_balance = 1500000; // Mock data
+    const current_balance = 1500000;
 
     const transactions = [
         { id: 1, fullName: 'Nguyễn Văn A', period_label: 'Học kỳ 1 2023-2024', amount: 24000, updated_at: '2024-05-15T10:30:00Z' }
