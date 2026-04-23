@@ -92,7 +92,7 @@ function App() {
         {/* Settings / System / Admin */}
         <Route path="/users" element={<ProtectedRoute requiredRoles={[]}><Users /></ProtectedRoute>} />
         <Route path="/users/add" element={<ProtectedRoute requiredRoles={[]}><AddUser /></ProtectedRoute>} />
-        <Route path="/users/edit/:id" element={<ProtectedRoute requiredRoles={[]}><EditUser /></ProtectedRoute>} />
+        <Route path="/users/edit/:id" element={<ProtectedRoute><EditUser /></ProtectedRoute>} />
         <Route path="/users/import" element={<ProtectedRoute requiredRoles={[]}><ImportUsers /></ProtectedRoute>} />
         
         {/* BCH roles & Admin */}

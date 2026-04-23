@@ -7,13 +7,12 @@ import { createUserValidation, updateUserValidation } from '../validation/user.v
 const router = express.Router();
 
 router.use(authenticate);
-router.use(requireAdmin);
 
-router.get('/', getAllUsers);
+router.get('/', requireAdmin, getAllUsers);
 router.get('/:id', getUserById);
-router.post('/', createUserValidation, createUser);
+router.post('/', requireAdmin, createUserValidation, createUser);
 router.put('/:id', updateUserValidation, updateUser);
 router.delete('/:id', deleteUser);
-router.post('/import', importUsers);
+router.post('/import', requireAdmin, importUsers);
 
 export default router;

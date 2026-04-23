@@ -5,18 +5,33 @@ import './Members.scss';
 import { useToast } from '../../components/Common/ToastNotification';
 import ConfirmModal from '../../components/Common/ConfirmModal';
 import Pagination from '../../components/Common/Pagination';
+import useAuthStore from '../../store/authStore';
 
 const Members = () => {
+    const { user } = useAuthStore();
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filterRole, setFilterRole] = useState('');
     const [filterUnit, setFilterUnit] = useState('');
+    const [units, setUnits] = useState([]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
 
     const { toast } = useToast();
     const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, name: '' });
+
+    useEffect(() => {
+        const fetchUnits = async () => {
+            try {
+                const res = await api.get('/units/brands');
+                if (res.success) setUnits(res.data);
+            } catch (err) {
+                console.error('Lỗi tải danh sách đơn vị:', err);
+            }
+        };
+        fetchUnits();
+    }, []);
 
     useEffect(() => {
         setCurrentPage(1);
@@ -78,6 +93,32 @@ const Members = () => {
 
     const currentMembers = members.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
+    const getAvailableRoles = () => {
+        if (user?.isAdmin === 1 || user?.roleName === 'BCH Trường') {
+            return ['BCH Trường', 'BCH Khoa', 'BCH Chi đoàn', 'Đoàn viên'];
+        }
+        if (user?.roleName === 'BCH Khoa') {
+            return ['BCH Khoa', 'BCH Chi đoàn', 'Đoàn viên'];
+        }
+        if (user?.roleName === 'BCH Chi đoàn') {
+            return ['BCH Chi đoàn', 'Đoàn viên'];
+        }
+        return ['Đoàn viên'];
+    };
+
+    const getAvailableUnits = () => {
+        if (user?.isAdmin === 1 || user?.roleName === 'BCH Trường') {
+            return units;
+        }
+        if (user?.roleName === 'BCH Khoa') {
+            return units.filter(u => u.unit?.id === user?.unitId || u.parentUnitId === user?.unitId);
+        }
+        return units.filter(u => u.unit?.id === user?.unitId);
+    };
+
+    const availableRoles = getAvailableRoles();
+    const availableUnits = getAvailableUnits();
+
     return (
         <div className="container">
             <div className="page-header">
@@ -91,13 +132,20 @@ const Members = () => {
                         <label>Vai trò hệ thống</label>
                         <select value={filterRole} onChange={(e) => setFilterRole(e.target.value)} className="form-control">
                             <option value="">-- Tất cả --</option>
-                            <option value="BCH Trường">BCH Trường</option>
-                            <option value="BCH Khoa">BCH Khoa</option>
-                            <option value="BCH Chi đoàn">BCH Chi đoàn</option>
-                            <option value="Đoàn viên">Đoàn viên</option>
+                            {availableRoles.map(role => (
+                                <option key={role} value={role}>{role}</option>
+                            ))}
                         </select>
                     </div>
-                    {/* Add Unit filter here if needed */}
+                    <div className="filter-item">
+                        <label>Đơn vị trực thuộc</label>
+                        <select value={filterUnit} onChange={(e) => setFilterUnit(e.target.value)} className="form-control">
+                            <option value="">-- Tất cả đơn vị --</option>
+                            {availableUnits.map(u => (
+                                <option key={u.id} value={u.unit?.id}>{u.unit?.title} ({u.brand?.title})</option>
+                            ))}
+                        </select>
+                    </div>
                     <div className="filter-buttons">
                         <button type="submit" className="btn btn-primary">Áp dụng Lọc</button>
                         <button type="button" className="btn btn-reset" onClick={() => { setFilterRole(''); setFilterUnit(''); }}>Làm mới</button>
@@ -138,7 +186,9 @@ const Members = () => {
                                         </td>
                                         <td><span className={`role-badge ${getRoleClass(row.roleName)}`}>{row.roleName || 'Đoàn viên'}</span></td>
                                         <td>
-                                            <button className="btn-delete-modern" onClick={() => openDeleteConfirm(row.userId, row.fullName)}>Xóa</button>
+                                            {row.isAdmin !== 1 && (
+                                                <button className="btn-delete-modern" onClick={() => openDeleteConfirm(row.userId, row.fullName)}>Xóa</button>
+                                            )}
                                         </td>
                                     </tr>
                                 ))

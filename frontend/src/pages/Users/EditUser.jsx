@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import api from '../../services/api';
 import useAuthStore from '../../store/authStore';
+import { useToast } from '../../components/Common/ToastNotification';
+import ConfirmModal from '../../components/Common/ConfirmModal';
 import './UserForm.scss';
 
 const EditUser = () => {
@@ -10,6 +12,10 @@ const EditUser = () => {
     const { id } = useParams();
     const [units, setUnits] = useState([]);
     const [formData, setFormData] = useState(null);
+    const { toast } = useToast();
+    
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
 
     useEffect(() => {
         const fetchInitialInfo = async () => {
@@ -35,7 +41,7 @@ const EditUser = () => {
                     });
                 }
             } catch (e) {
-                alert('Lỗi tải dữ liệu người dùng');
+                toast.error('Lỗi tải dữ liệu người dùng. Vui lòng thử lại sau.');
                 if (user?.isAdmin === 1) navigate('/users');
                 else navigate('/profile');
             }
@@ -43,39 +49,57 @@ const EditUser = () => {
         if (id) {
             fetchInitialInfo();
         }
-    }, [id, navigate, user]);
+    }, [id, navigate, user, toast]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e) => {
+    const handlePreSubmit = (e) => {
         e.preventDefault();
-        try {
-            const res = await api.put(`/users/${id}`, formData);
-            if (res.success) {
-                alert('Cập nhật thông tin thành công!');
+        setIsConfirmOpen(true);
+    };
 
-                if (user?.isAdmin === 1) navigate('/users');
-                else navigate('/profile');
+    const handleSubmit = async () => {
+        setIsConfirmOpen(false);
+        setLoadingSubmit(true);
+        try {
+            const payload = { ...formData };
+            if (payload.roleName === 'Quản trị viên') {
+                payload.isAdmin = 1;
+            } else {
+                payload.isAdmin = 0;
+            }
+            
+            const res = await api.put(`/users/${id}`, payload);
+            if (res.success) {
+                toast.success('Cập nhật thông tin thành công!');
+                setTimeout(() => {
+                    if (user?.isAdmin === 1 && user?.userId !== Number(id)) navigate('/users');
+                    else navigate('/profile');
+                }, 1500);
             }
         } catch (error) {
-            alert(error.message || 'Cập nhật thất bại.');
+            toast.error(error.message || 'Cập nhật thất bại. Vui lòng kiểm tra lại thông tin.');
+        } finally {
+            setLoadingSubmit(false);
         }
     };
 
     if (!formData) return <div className="container">Đang tải...</div>;
 
+    const isSelfEdit = user?.userId === Number(id);
+
     return (
         <div className="container">
             <div className="page-header">
-                <h2>{user?.isAdmin === 1 && user?.userId !== Number(id) ? 'Cập nhật thông tin Người dùng' : 'Chỉnh sửa thông tin cá nhân'}</h2>
+                <h2>{isSelfEdit ? 'Chỉnh sửa thông tin cá nhân' : 'Cập nhật thông tin Người dùng'}</h2>
                 <p>Cập nhật chính xác dữ liệu của bạn trong hệ thống</p>
             </div>
 
             <div className="form-wrapper">
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handlePreSubmit}>
                     <div className="form-grid">
                         <div className="form-section-title">Thông tin cơ bản</div>
                         <div className="form-group-modern">
@@ -157,10 +181,23 @@ const EditUser = () => {
 
                     <div className="form-actions-modern">
                         <Link to={user?.isAdmin === 1 ? `/users` : `/profile`} className="btn-back-modern">Quay lại</Link>
-                        <button type="submit" className="btn-save">Lưu thay đổi</button>
+                        <button type="submit" className="btn-save" disabled={loadingSubmit}>
+                            {loadingSubmit ? 'Đang lưu...' : 'Lưu thay đổi'}
+                        </button>
                     </div>
                 </form>
             </div>
+
+            <ConfirmModal
+                isOpen={isConfirmOpen}
+                toggle={() => setIsConfirmOpen(false)}
+                title={isSelfEdit ? "Xác nhận cập nhật thông tin" : "Xác nhận chỉnh sửa người dùng"}
+                message="Bạn có chắc chắn muốn lưu lại các thay đổi này không? Thông tin mới sẽ ghi đè lên dữ liệu cũ trên hệ thống."
+                onConfirm={handleSubmit}
+                confirmText="Đồng ý lưu"
+                cancelText="Hủy bỏ"
+                variant="info"
+            />
         </div>
     );
 };

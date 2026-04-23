@@ -29,6 +29,11 @@ export const getUserById = async (req, res) => {
       include: userInclude,
     });
     if (!user) return sendError(res, 'Người dùng không tồn tại.', 404);
+
+    if (req.user.isAdmin !== 1 && req.user.userId !== user.userId) {
+        return sendError(res, 'Bạn không có quyền truy cập thông tin này.', 403);
+    }
+
     const { password, ...result } = user;
     return sendSuccess(res, result);
   } catch (err) {
@@ -68,14 +73,30 @@ export const updateUser = async (req, res) => {
   if (!errors.isEmpty()) return sendError(res, errors.array()[0].msg, 400);
 
   const userId = parseInt(req.params.id);
+
+  if (req.user.isAdmin !== 1 && req.user.userId !== userId) {
+      return sendError(res, 'Bạn không có quyền sửa thông tin này.', 403);
+  }
+
   const { fullName, email, gender, identifyCard, birthDate, joinDate, roleName, isAdmin, unitId, password } = req.body;
   try {
+    let finalRoleName = roleName;
+    let finalIsAdmin = isAdmin ? 1 : 0;
+    let finalUnitId = unitId ? parseInt(unitId) : null;
+
+    if (req.user.isAdmin !== 1) {
+        finalRoleName = req.user.roleName;
+        finalIsAdmin = 0;
+        finalUnitId = req.user.unitId;
+    }
+
     const data = {
       fullName, email,
       gender: gender !== undefined ? parseInt(gender) : null,
-      identifyCard, roleName,
-      isAdmin: isAdmin ? 1 : 0,
-      unitId: unitId ? parseInt(unitId) : null,
+      identifyCard, 
+      roleName: finalRoleName,
+      isAdmin: finalIsAdmin,
+      unitId: finalUnitId,
       birthDate: birthDate ? new Date(birthDate) : null,
       joinDate: joinDate ? new Date(joinDate) : null,
     };
@@ -97,7 +118,21 @@ export const deleteUser = async (req, res) => {
   try {
     const target = await prisma.user.findUnique({ where: { userId } });
     if (!target) return sendError(res, 'Người dùng không tồn tại.', 404);
-    if (target.isAdmin === 1) return sendError(res, 'Không thể xóa tài khoản quản trị viên.', 403);
+    
+    const getRoleLevel = (roleName, isAdmin) => {
+        if (isAdmin === 1 || roleName === 'Quản trị viên') return 5;
+        if (roleName === 'BCH Trường') return 4;
+        if (roleName === 'BCH Khoa') return 3;
+        if (roleName === 'BCH Chi đoàn') return 2;
+        return 1;
+    };
+
+    const myLevel = getRoleLevel(req.user.roleName, req.user.isAdmin);
+    const targetLevel = getRoleLevel(target.roleName, target.isAdmin);
+
+    if (myLevel <= targetLevel) {
+        return sendError(res, 'Bạn không có quyền xóa tài khoản ngang bằng hoặc cao hơn cấp bậc của mình.', 403);
+    }
 
     await prisma.user.delete({ where: { userId } });
     return sendSuccess(res, null, 'Xóa người dùng thành công!');
