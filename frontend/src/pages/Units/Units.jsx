@@ -4,52 +4,78 @@ import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import './Units.scss';
 import { useToast } from '../../components/Common/ToastNotification';
+import ConfirmModal from '../../components/Common/ConfirmModal';
 
 const Units = () => {
     const { user } = useAuthStore();
     const [units, setUnits] = useState([]);
     const [expandedNodes, setExpandedNodes] = useState({});
     const { toast } = useToast();
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, name: '' });
+
+    const fetchTree = async () => {
+        try {
+            const res = await api.get('/units/brands');
+            if (res.success) {
+                const data = res.data.map(item => ({
+                    ...item,
+                    ub_id: item.id,
+                    unit_title: item.unit?.title || '',
+                    brand: item.brand?.title || '',
+                    children: []
+                }));
+                
+                const map = {};
+                data.forEach(node => { map[node.id] = node; });
+                
+                const roots = [];
+                const initialExpanded = {};
+                data.forEach(node => {
+                    initialExpanded[node.ub_id] = true;
+                    if (node.parentUnitId) {
+                        if (map[node.parentUnitId]) {
+                            map[node.parentUnitId].children.push(node);
+                        }
+                    } else {
+                        roots.push(node);
+                    }
+                });
+                
+                setExpandedNodes(initialExpanded);
+                setUnits(roots);
+            }
+        } catch(e) {
+            console.error(e);
+            toast.error("Lỗi khi tải cấu trúc tổ chức");
+        }
+    };
 
     useEffect(() => {
-        const fetchTree = async () => {
-            try {
-                const res = await api.get('/units/brands');
-                if (res.success) {
-                    const data = res.data.map(item => ({
-                        ...item,
-                        ub_id: item.id,
-                        unit_title: item.unit?.title || '',
-                        brand: item.brand?.title || '',
-                        children: []
-                    }));
-                    
-                    const map = {};
-                    data.forEach(node => { map[node.id] = node; });
-                    
-                    const roots = [];
-                    const initialExpanded = {};
-                    data.forEach(node => {
-                        initialExpanded[node.ub_id] = true;
-                        if (node.parentUnitId) {
-                            if (map[node.parentUnitId]) {
-                                map[node.parentUnitId].children.push(node);
-                            }
-                        } else {
-                            roots.push(node);
-                        }
-                    });
-                    
-                    setExpandedNodes(initialExpanded);
-                    setUnits(roots);
-                }
-            } catch(e) {
-                console.error(e);
-                toast.error("Lỗi khi tải cấu trúc tổ chức");
-            }
-        };
         fetchTree();
     }, [toast]);
+
+    const openDeleteConfirm = (id, name) => {
+        setConfirmModal({ isOpen: true, id, name });
+    };
+
+    const closeDeleteConfirm = () => {
+        setConfirmModal({ isOpen: false, id: null, name: '' });
+    };
+
+    const handleDelete = async () => {
+        if (!confirmModal.id) return;
+        try {
+            const res = await api.delete(`/units/brands/${confirmModal.id}`);
+            if (res.success) {
+                toast.success('Đã xóa đơn vị thành công.');
+                fetchTree();
+            }
+        } catch (error) {
+            toast.error(error.message || 'Lỗi khi xóa.');
+        } finally {
+            closeDeleteConfirm();
+        }
+    };
 
     const toggleExpand = (id) => {
         setExpandedNodes(prev => ({
@@ -96,7 +122,7 @@ const Units = () => {
                             <Link className="btn-add-unit" to={`/units/add?brand=Chi%20đoàn&parent_ub_id=${node.ub_id}`}>Thêm Chi đoàn</Link>
                         )}
                         <Link className="btn-edit-unit" to={`/units/edit/${node.ub_id}`}>Sửa</Link>
-                        <a className="btn-delete-unit" href="#" onClick={(e) => { e.preventDefault(); toast.info('Chức năng xóa đơn vị đang phát triển.'); }}>Xóa</a>
+                        <button className="btn-delete-unit" onClick={() => openDeleteConfirm(node.ub_id, node.unit_title)}>Xóa</button>
                     </div>
                 </div>
                 
@@ -133,6 +159,17 @@ const Units = () => {
                     </ul>
                 </div>
             </div>
+
+            <ConfirmModal 
+                isOpen={confirmModal.isOpen} 
+                toggle={closeDeleteConfirm}
+                title="Xóa đơn vị tổ chức"
+                message={`Bạn có chắc chắn muốn xóa đơn vị: ${confirmModal.name}? Mọi dữ liệu liên quan nếu có sẽ khiến việc xóa thất bại.`}
+                onConfirm={handleDelete}
+                confirmText="Đồng ý xóa"
+                cancelText="Hủy bỏ"
+                variant="danger"
+            />
         </div>
     );
 };
