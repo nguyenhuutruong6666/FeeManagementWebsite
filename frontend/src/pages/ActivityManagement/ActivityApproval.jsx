@@ -1,8 +1,39 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import api from '../../services/api';
 import { useToast } from '../../components/Common/ToastNotification';
 
 const ActivityApproval = () => {
     const { toast } = useToast();
+    const [activities, setActivities] = useState([]);
+
+    const fetchDrafts = async () => {
+        try {
+            const res = await api.get('/activities');
+            if (res.success) {
+                const drafts = res.data.filter(a => a.status === 'draft');
+                setActivities(drafts);
+            }
+        } catch (err) {
+            toast.error('Lỗi khi tải danh sách đề xuất');
+        }
+    };
+
+    useEffect(() => {
+        fetchDrafts();
+    }, []);
+
+    const handleAction = async (id, type) => {
+        try {
+            const res = await api.put(`/activities/${id}/${type}`);
+            if (res.success) {
+                toast.success(type === 'approve' ? 'Đã duyệt đề xuất hoạt động!' : 'Đã từ chối đề xuất này!');
+                fetchDrafts();
+            }
+        } catch (err) {
+            toast.error(err.message || 'Có lỗi xảy ra');
+        }
+    };
 
     return (
         <div className="container">
@@ -24,18 +55,22 @@ const ActivityApproval = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td style={{fontWeight: '600', color: '#0f172a'}}>Chi đoàn K72E1</td>
-                                <td>Đại hội Chi đoàn</td>
-                                <td style={{fontWeight: '600', color: '#0284c7'}}>500.000 đ</td>
-                                <td><span className="status-badge" style={{background: '#fef3c7', color: '#d97706'}}>Đang chờ duyệt</span></td>
-                                <td>
-                                    <div className="btn-actions">
-                                        <button className="btn-activate" onClick={() => toast.success('Đã thay đổi trạng thái thành ĐƯỢC DUYỆT!')}><i className="ri-check-line"></i> Duyệt</button>
-                                        <button className="btn-delete" onClick={() => toast.error('Đã TỪ CHỐI đề xuất này!')}><i className="ri-close-line"></i> Từ chối</button>
-                                    </div>
-                                </td>
-                            </tr>
+                            {activities.length === 0 ? (
+                                <tr><td colSpan="5" style={{textAlign: 'center', padding: '20px'}}>Không có đề xuất nào chờ duyệt.</td></tr>
+                            ) : activities.map(a => (
+                                <tr key={a.id}>
+                                    <td style={{fontWeight: '600', color: '#0f172a'}}>{a.unitBrand?.unit?.title || 'Đơn vị ẩn danh'}</td>
+                                    <td>{a.title}</td>
+                                    <td style={{fontWeight: '600', color: '#0284c7'}}>{new Intl.NumberFormat('vi-VN').format(a.estimatedBudget)} đ</td>
+                                    <td><span className="status-badge" style={{background: '#fef3c7', color: '#d97706'}}>Đang chờ duyệt</span></td>
+                                    <td>
+                                        <div className="btn-actions">
+                                            <button className="btn-activate" onClick={() => handleAction(a.id, 'approve')}><i className="ri-check-line"></i> Duyệt</button>
+                                            <button className="btn-delete" onClick={() => handleAction(a.id, 'reject')}><i className="ri-close-line"></i> Từ chối</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>

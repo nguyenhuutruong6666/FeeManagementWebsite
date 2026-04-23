@@ -57,4 +57,52 @@ export const createDistribution = async (req, res) => {
     return sendError(res, err.message);
   }
 };
+export const approveDistribution = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const distribution = await prisma.feeDistribution.findUnique({ where: { id } });
 
+        if (!distribution) return sendError(res, 'Không tìm thấy khoản phân bổ', 404);
+        if (distribution.status !== 'pending' && distribution.status !== 'transferred') {
+            return sendError(res, 'Chỉ có thể duyệt khoản thu đang chờ', 400);
+        }
+
+        // Cập nhật trạng thái
+        const updated = await prisma.feeDistribution.update({
+            where: { id },
+            data: { status: 'approved' }
+        });
+
+        // Tạo giao dịch thu tiền vào sổ quỹ của đơn vị nhận (transferUnitId)
+        if (distribution.transferUnitId && distribution.transferAmount > 0) {
+            await prisma.feeCashbook.create({
+                data: {
+                    unitId: distribution.transferUnitId,
+                    transactionType: 'income',
+                    transactionCategory: `Thu phí nộp lên từ đơn vị cấp dưới (Kỳ: ${distribution.periodLabel})`,
+                    amount: distribution.transferAmount,
+                    transactionDate: new Date(),
+                    description: `Duyệt khoản trích nộp từ đơn vị ${distribution.unitId}`,
+                    recordedBy: req.user.userId
+                }
+            });
+        }
+
+        return sendSuccess(res, updated, 'Đã duyệt khoản thu và ghi nhận vào sổ quỹ!');
+    } catch (err) {
+        return sendError(res, err.message);
+    }
+};
+
+export const rejectDistribution = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const updated = await prisma.feeDistribution.update({
+            where: { id },
+            data: { status: 'rejected' }
+        });
+        return sendSuccess(res, updated, 'Đã từ chối khoản thu!');
+    } catch (err) {
+        return sendError(res, err.message);
+    }
+};

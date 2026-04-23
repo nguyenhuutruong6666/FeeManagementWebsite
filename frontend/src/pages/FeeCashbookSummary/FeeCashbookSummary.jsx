@@ -1,17 +1,41 @@
+import { useState, useEffect } from 'react';
 import useAuthStore from '../../store/authStore';
 import { formatDate } from '../../utils/formatters';
 import { Link } from 'react-router-dom';
+import api from '../../services/api';
 import './FeeCashbookSummary.scss';
+import { useToast } from '../../components/Common/ToastNotification';
 
 const FeeCashbookSummary = () => {
     const { user } = useAuthStore();
     const user_role = user?.roleName;
     const unitName = user?.unitBrand?.unit?.title ? `${user.unitBrand.unit.title} (${user.unitBrand.brand?.title})` : 'Không xác định';
-    const current_balance = 1500000;
+    
+    const [transactions, setTransactions] = useState([]);
+    const [currentBalance, setCurrentBalance] = useState(0);
+    const { toast } = useToast();
 
-    const transactions = [
-        { id: 1, fullName: 'Nguyễn Văn A', period_label: 'Học kỳ 1 2023-2024', amount: 24000, updated_at: '2024-05-15T10:30:00Z' }
-    ];
+    useEffect(() => {
+        const fetchCashbooks = async () => {
+            try {
+                const res = await api.get('/fee-cashbooks');
+                if (res.success) {
+                    const data = res.data || [];
+                    setTransactions(data);
+                    
+                    const balance = data.reduce((acc, curr) => {
+                        return curr.transactionType === 'income' 
+                            ? acc + curr.amount 
+                            : acc - curr.amount;
+                    }, 0);
+                    setCurrentBalance(balance);
+                }
+            } catch (err) {
+                toast.error('Lỗi khi tải dữ liệu sổ quỹ');
+            }
+        };
+        fetchCashbooks();
+    }, [toast]);
 
     return (
         <div className="container">
@@ -39,33 +63,41 @@ const FeeCashbookSummary = () => {
                 
                 <div className="balance-badge">
                     <h4>Tổng số dư (Đã duyệt)</h4>
-                    <p className="amount">{new Intl.NumberFormat('vi-VN').format(current_balance)} đ</p>
+                    <p className="amount">{new Intl.NumberFormat('vi-VN').format(currentBalance)} đ</p>
                 </div>
             </div>
 
             <div className="data-table-card">
-                <h3 style={{marginTop: 0, marginBottom: '20px', fontSize: '1.1rem', color: '#0f172a'}}>Danh sách đoàn viên nộp gần nhất</h3>
+                <h3 style={{marginTop: 0, marginBottom: '20px', fontSize: '1.1rem', color: '#0f172a'}}>Lịch sử Thu/Chi Sổ quỹ</h3>
                 <div className="table-wrapper">
                     <table className="styled-table">
                         <thead>
                             <tr>
-                                <th>Họ tên</th>
-                                <th>Kỳ thu phí</th>
-                                <th>Số tiền</th>
-                                <th>Ngày nộp</th>
+                                <th>Ngày giao dịch</th>
+                                <th>Loại giao dịch</th>
+                                <th>Hạng mục</th>
+                                <th>Số tiền (VNĐ)</th>
+                                <th>Ghi chú</th>
                             </tr>
                         </thead>
                         <tbody>
                             {transactions.length > 0 ? transactions.map(t => (
                                 <tr key={t.id}>
-                                    <td style={{fontWeight: '600', color: '#0f172a'}}>{t.fullName}</td>
-                                    <td>{t.period_label}</td>
-                                    <td style={{color: '#10b981', fontWeight: 'bold'}}>{new Intl.NumberFormat('vi-VN').format(t.amount)} đ</td>
-                                    <td>{formatDate(t.updated_at)}</td>
+                                    <td>{formatDate(t.transactionDate)}</td>
+                                    <td>
+                                        <span className={`status-badge ${t.transactionType === 'income' ? 'success' : 'danger'}`}>
+                                            {t.transactionType === 'income' ? 'Thu' : 'Chi'}
+                                        </span>
+                                    </td>
+                                    <td style={{fontWeight: '500', color: '#0f172a'}}>{t.transactionCategory}</td>
+                                    <td style={{color: t.transactionType === 'income' ? '#10b981' : '#ef4444', fontWeight: 'bold'}}>
+                                        {t.transactionType === 'income' ? '+' : '-'}{new Intl.NumberFormat('vi-VN').format(t.amount)} đ
+                                    </td>
+                                    <td>{t.description || '-'}</td>
                                 </tr>
                             )) : (
                                 <tr>
-                                    <td colSpan="4" style={{textAlign: 'center', padding: '30px'}}>Chưa có giao dịch nào</td>
+                                    <td colSpan="5" style={{textAlign: 'center', padding: '30px'}}>Chưa có giao dịch nào trong sổ quỹ</td>
                                 </tr>
                             )}
                         </tbody>

@@ -138,3 +138,26 @@ export const getAllPayments = async (req, res) => {
 export const vnpayIpn = async (req, res) => {
     return sendSuccess(res, null, 'Ghi nhận IPN.');
 };
+
+export const rejectCashPayment = async (req, res) => {
+    try {
+        const { paymentId } = req.body;
+        const payment = await prisma.feePayment.findUnique({ where: { id: paymentId } });
+
+        if (!payment || payment.status !== 'Pending' || payment.paymentMethod !== 'Cash') {
+            return sendError(res, 'Giao dịch không hợp lệ hoặc đã được xử lý.', 400);
+        }
+
+        // Đổi trạng thái giao dịch nộp phí thành Failed
+        await prisma.feePayment.update({
+            where: { id: paymentId },
+            data: { status: 'Failed' }
+        });
+
+        // Không cập nhật FeeObligation, giữ nguyên trạng thái "Chưa nộp" để người dùng nộp lại
+
+        return sendSuccess(res, null, 'Đã từ chối khoản nộp tiền mặt. Đoàn viên có thể nộp lại.');
+    } catch(err) {
+        return sendError(res, err.message);
+    }
+};

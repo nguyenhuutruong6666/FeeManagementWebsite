@@ -36,3 +36,36 @@ export const getCashbooks = async (req, res) => {
     return sendError(res, err.message);
   }
 };
+
+export const createExpense = async (req, res) => {
+    try {
+        const { activityId, amount, description } = req.body;
+        if (!activityId || !amount) return sendError(res, 'Thiếu thông tin bắt buộc', 400);
+
+        const activity = await prisma.activityProposal.findUnique({ where: { id: parseInt(activityId) } });
+        if (!activity) return sendError(res, 'Không tìm thấy hoạt động', 404);
+
+        // Tạo giao dịch chi
+        const cashbook = await prisma.feeCashbook.create({
+            data: {
+                unitId: req.user.unitId,
+                transactionType: 'expense',
+                transactionCategory: `Chi hoạt động: ${activity.title}`,
+                amount: parseFloat(amount),
+                transactionDate: new Date(),
+                description: description || 'Xuất quỹ giải ngân',
+                recordedBy: req.user.userId
+            }
+        });
+
+        // Cập nhật trạng thái hoạt động thành disbursed
+        await prisma.activityProposal.update({
+            where: { id: parseInt(activityId) },
+            data: { status: 'disbursed' }
+        });
+
+        return sendSuccess(res, cashbook, 'Tạo phiếu chi thành công!', 201);
+    } catch (err) {
+        return sendError(res, err.message);
+    }
+};
