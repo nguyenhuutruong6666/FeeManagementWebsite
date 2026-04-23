@@ -36,7 +36,30 @@ export const createPolicy = async (req, res) => {
 };
 
 export const updatePolicy = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendError(res, errors.array()[0].msg, 400);
 
+  const id = parseInt(req.params.id);
+  const { policyName, cycle, dueDate, standardAmount, rulesJson } = req.body;
+  try {
+    const existing = await prisma.feePolicy.findUnique({ where: { id } });
+    if (!existing) return sendError(res, 'Chính sách không tồn tại.', 404);
+    if (existing.status === 'Active') return sendError(res, 'Không thể chỉnh sửa chính sách đang hoạt động.', 400);
+
+    const updated = await prisma.feePolicy.update({
+      where: { id },
+      data: {
+        policyName,
+        cycle,
+        dueDate: dueDate ? new Date(dueDate) : existing.dueDate,
+        standardAmount: standardAmount ? parseFloat(standardAmount) : existing.standardAmount,
+        rulesJson: rulesJson ? JSON.stringify(rulesJson) : existing.rulesJson,
+      },
+    });
+    return sendSuccess(res, updated, 'Cập nhật chính sách thành công!');
+  } catch (err) {
+    return sendError(res, err.message);
+  }
 };
 
 export const activatePolicy = async (req, res) => {

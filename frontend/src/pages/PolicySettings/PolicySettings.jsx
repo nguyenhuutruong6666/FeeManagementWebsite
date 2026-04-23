@@ -5,12 +5,16 @@ import { policyService } from '../../services/policyService';
 import { formatDate } from '../../utils/formatters';
 import './PolicySettings.scss';
 import { useToast } from '../../components/Common/ToastNotification';
+import ConfirmModal from '../../components/Common/ConfirmModal';
+import api from '../../services/api';
 
 const PolicySettings = () => {
     const { user } = useAuthStore();
     const [policies, setPolicies] = useState([]);
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, action: '', policyName: '' });
+    const [actionLoading, setActionLoading] = useState(false);
 
     useEffect(() => {
         fetchPolicies();
@@ -18,13 +22,14 @@ const PolicySettings = () => {
 
     const fetchPolicies = async () => {
         try {
+            setLoading(true);
             const res = await policyService.getAll();
             if (res.success) {
                 setPolicies(res.data);
             }
         } catch (e) {
             console.error(e);
-            toast.error("Lỗi khi tải chính sách đoàn phí");
+            toast.error('Lỗi khi tải chính sách đoàn phí');
         } finally {
             setLoading(false);
         }
@@ -34,9 +39,44 @@ const PolicySettings = () => {
         return <div className="container"><p style={{color: 'red'}}>Bạn không có quyền truy cập trang này.</p></div>;
     }
 
-    const handleAction = (e, action) => {
-        e.preventDefault();
-        toast.info(`Chức năng ${action} đang được phát triển.`);
+    const openConfirm = (id, action, policyName) => {
+        setConfirmModal({ isOpen: true, id, action, policyName });
+    };
+
+    const closeConfirm = () => {
+        setConfirmModal({ isOpen: false, id: null, action: '', policyName: '' });
+    };
+
+    const handleConfirmAction = async () => {
+        const { id, action } = confirmModal;
+        setActionLoading(true);
+        try {
+            let res;
+            if (action === 'activate') {
+                res = await api.put(`/fee-policies/${id}/activate`);
+                if (res.success) toast.success('Đã kích hoạt chính sách thành công!');
+            } else if (action === 'deactivate') {
+                res = await api.put(`/fee-policies/${id}/deactivate`);
+                if (res.success) toast.success('Đã hủy kích hoạt chính sách!');
+            } else if (action === 'delete') {
+                res = await api.delete(`/fee-policies/${id}`);
+                if (res.success) toast.success('Đã xóa chính sách thành công!');
+            }
+            fetchPolicies();
+        } catch (err) {
+            toast.error(err.message || 'Thao tác thất bại. Vui lòng thử lại.');
+        } finally {
+            setActionLoading(false);
+            closeConfirm();
+        }
+    };
+
+    const getConfirmText = () => {
+        const { action, policyName } = confirmModal;
+        if (action === 'activate') return `Bạn có chắc muốn kích hoạt chính sách "${policyName}"?`;
+        if (action === 'deactivate') return `Bạn có chắc muốn hủy kích hoạt chính sách "${policyName}"?`;
+        if (action === 'delete') return `Bạn có chắc muốn XÓA chính sách "${policyName}"? Hành động này không thể hoàn tác.`;
+        return '';
     };
 
     return (
@@ -87,11 +127,29 @@ const PolicySettings = () => {
                                         <td>
                                             <div className="btn-actions">
                                                 {p.status === 'Active' ? (
-                                                    <button className="btn-deactivate" onClick={(e) => handleAction(e, 'Hủy kích hoạt')}>Hủy kích hoạt</button>
+                                                    <button
+                                                        className="btn-deactivate"
+                                                        onClick={() => openConfirm(p.id, 'deactivate', p.policyName)}
+                                                        disabled={actionLoading}
+                                                    >
+                                                        Hủy kích hoạt
+                                                    </button>
                                                 ) : (
                                                     <>
-                                                        <button className="btn-activate" onClick={(e) => handleAction(e, 'Kích hoạt')}>Kích hoạt</button>
-                                                        <button className="btn-delete" onClick={(e) => handleAction(e, 'Xóa')}>Xóa</button>
+                                                        <button
+                                                            className="btn-activate"
+                                                            onClick={() => openConfirm(p.id, 'activate', p.policyName)}
+                                                            disabled={actionLoading}
+                                                        >
+                                                            Kích hoạt
+                                                        </button>
+                                                        <button
+                                                            className="btn-delete"
+                                                            onClick={() => openConfirm(p.id, 'delete', p.policyName)}
+                                                            disabled={actionLoading}
+                                                        >
+                                                            Xóa
+                                                        </button>
                                                     </>
                                                 )}
                                             </div>
@@ -105,6 +163,25 @@ const PolicySettings = () => {
                     </table>
                 </div>
             </div>
+
+            <ConfirmModal
+                isOpen={confirmModal.isOpen}
+                toggle={closeConfirm}
+                title={
+                    confirmModal.action === 'delete' ? 'Xóa chính sách' :
+                    confirmModal.action === 'activate' ? 'Kích hoạt chính sách' :
+                    'Hủy kích hoạt chính sách'
+                }
+                message={getConfirmText()}
+                onConfirm={handleConfirmAction}
+                confirmText={
+                    confirmModal.action === 'delete' ? 'Xóa' :
+                    confirmModal.action === 'activate' ? 'Kích hoạt' :
+                    'Hủy kích hoạt'
+                }
+                cancelText="Hủy bỏ"
+                variant={confirmModal.action === 'delete' ? 'danger' : 'warning'}
+            />
         </div>
     );
 };

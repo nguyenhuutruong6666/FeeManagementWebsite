@@ -1,78 +1,208 @@
 @import '../../styles/variables';
 
+// ─── Backdrop ─────────────────────────────────────────────────────────────────
 .modal-backdrop {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.4);
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1050;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: backdropFadeIn 0.2s ease;
 }
 
-.modal-content {
+@keyframes backdropFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+// ─── Modal Card ───────────────────────────────────────────────────────────────
+.modal-content.custom-modal {
+    background: #fff;
     border: none !important;
-    border-radius: 16px !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18), 0 4px 16px rgba(15, 23, 42, 0.08) !important;
+    width: 100%;
+    max-width: 420px;
     overflow: hidden;
+    animation: modalSlideIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-20px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
 .modal-header {
-    background: #f8fafc;
+    background: #f8fafc !important;
     border-bottom: 1px solid $border-color !important;
-    padding: 16px 24px !important;
-    
+    padding: 18px 24px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
     .modal-title {
-        font-weight: 600;
-        font-size: 1.1rem;
+        font-weight: 700;
+        font-size: 1rem;
         color: $text-main;
         display: flex;
         align-items: center;
+        gap: 8px;
+
+        i {
+            font-size: 1.1rem;
+        }
     }
 
     .btn-close {
-        opacity: 0.5;
-        transition: $transition-fast;
-        &:hover { opacity: 1; }
-    }
-}
-
-.modal-body {
-    padding: 30px 24px !important;
-    
-    p {
-        font-size: 1rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         color: $text-light;
-        margin-top: 15px;
-        line-height: 1.5;
+        font-size: 1.2rem;
+        transition: $transition-fast;
+        padding: 0;
+
+        &:hover {
+            background: #e2e8f0;
+            color: $text-main;
+        }
     }
 }
 
+// ─── Body ─────────────────────────────────────────────────────────────────────
+.modal-body {
+    padding: 32px 28px 24px !important;
+    text-align: center;
+
+    .icon-wrapper {
+        margin-bottom: 18px;
+    }
+
+    .icon-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+
+        // Danger variant — soft red
+        &.bg-danger {
+            background: #fef2f2;
+            color: #dc2626;
+            i { color: #dc2626; }
+        }
+
+        // Warning variant — soft amber
+        &.bg-warning {
+            background: #fffbeb;
+            color: #d97706;
+            i { color: #d97706; }
+        }
+
+        // Info variant — soft blue
+        &.bg-info {
+            background: #eff6ff;
+            color: #3b82f6;
+            i { color: #3b82f6; }
+        }
+
+        i {
+            font-size: 1.8rem;
+        }
+    }
+
+    p {
+        font-size: 0.95rem;
+        color: $text-muted;
+        margin: 0;
+        line-height: 1.6;
+    }
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
 .modal-footer {
-    border-top: none !important;
+    border-top: 1px solid $border-color !important;
     padding: 16px 24px 24px !important;
     display: flex;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
+    background: #fafafa;
 
     .btn {
-        padding: 10px 24px;
-        border-radius: 8px;
+        padding: 10px 28px;
+        border-radius: 10px;
         font-weight: 600;
+        font-size: 0.9rem;
         transition: $transition-fast;
-        letter-spacing: 0.3px;
+        cursor: pointer;
+        letter-spacing: 0.2px;
+        border: none;
+
+        &:active { transform: scale(0.97); }
     }
 
+    // Cancel button — neutral
     .btn-secondary {
-        background: white;
-        color: $text-main;
-        border: 1px solid $border-color;
-        
+        background: #fff;
+        color: $text-muted;
+        border: 1.5px solid $border-color !important;
+
         &:hover {
             background: #f1f5f9;
-            color: $primary-dark;
-            border-color: #cbd5e1;
+            color: $text-main;
+            border-color: #cbd5e1 !important;
+        }
+    }
+
+    // Danger confirm — refined red
+    .btn-danger {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+
+        &:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+            transform: translateY(-1px);
+        }
+    }
+
+    // Warning confirm — amber
+    .btn-warning {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+
+        &:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            box-shadow: 0 6px 16px rgba(217, 119, 6, 0.4);
+            transform: translateY(-1px);
+        }
+    }
+
+    // Info / primary confirm — blue
+    .btn-info {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+
+        &:hover {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            box-shadow: 0 6px 16px rgba(2, 132, 199, 0.4);
+            transform: translateY(-1px);
         }
     }
 }

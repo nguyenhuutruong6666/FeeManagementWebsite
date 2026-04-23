@@ -88,7 +88,53 @@ export const confirmCashPayment = async (req, res) => {
     }
 };
 
-export const vnpayIpn = async (req, res) => {
+export const getAllPayments = async (req, res) => {
+  try {
+    const { roleName, unitId, isAdmin } = req.user;
+    const { status, method, search } = req.query;
 
+    let whereClause = {};
+
+    // Filter by status
+    if (status) whereClause.status = status;
+    // Filter by method
+    if (method) whereClause.paymentMethod = method;
+    // Filter by search (transaction code)
+    if (search) {
+      whereClause.transactionCode = { contains: search, mode: 'insensitive' };
+    }
+
+    // Scope by role
+    if (isAdmin !== 1 && roleName !== 'BCH Trường') {
+      if (roleName === 'BCH Khoa') {
+        const units = await prisma.unitBrand.findMany({
+          where: { OR: [{ id: unitId }, { parentUnitId: unitId }] },
+          select: { id: true },
+        });
+        const unitIds = units.map(u => u.id);
+        whereClause.payer = { unitId: { in: unitIds } };
+      } else if (roleName === 'BCH Chi đoàn') {
+        whereClause.payer = { unitId };
+      }
+    }
+
+    const payments = await prisma.feePayment.findMany({
+      where: whereClause,
+      include: {
+        payer: { select: { fullName: true, unitBrand: { include: { unit: true, brand: true } } } },
+        collector: { select: { fullName: true } },
+        obligation: { include: { policy: { select: { policyName: true, cycle: true } } } },
+        receipt: { select: { receiptCode: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return sendSuccess(res, payments);
+  } catch (err) {
+    return sendError(res, err.message);
+  }
+};
+
+export const vnpayIpn = async (req, res) => {
     return sendSuccess(res, null, 'Ghi nhận IPN.');
 };

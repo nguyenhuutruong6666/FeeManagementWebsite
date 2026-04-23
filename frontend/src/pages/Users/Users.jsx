@@ -4,6 +4,8 @@ import './Users.scss';
 import { userService } from '../../services/userService';
 import { formatDate, getGenderLabel } from '../../utils/formatters';
 import Pagination from '../../components/Common/Pagination';
+import ConfirmModal from '../../components/Common/ConfirmModal';
+import { useToast } from '../../components/Common/ToastNotification';
 
 const Users = () => {
     const [users, setUsers] = useState([]);
@@ -11,6 +13,9 @@ const Users = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
     const pageSize = 10;
+
+    const { toast } = useToast();
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, name: '' });
 
     useEffect(() => {
         fetchUsers();
@@ -24,22 +29,32 @@ const Users = () => {
                 setCurrentPage(1);
             }
         } catch (error) {
-            console.error(error);
+            toast.error(error.message || 'Không thể tải danh sách người dùng.');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleDelete = async (id, name) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa người dùng: ${name}?`)) return;
+    const openDeleteConfirm = (id, name) => {
+        setConfirmModal({ isOpen: true, id, name });
+    };
+
+    const closeDeleteConfirm = () => {
+        setConfirmModal({ isOpen: false, id: null, name: '' });
+    };
+
+    const handleDelete = async () => {
+        if (!confirmModal.id) return;
         try {
-            const res = await userService.delete(id);
+            const res = await userService.delete(confirmModal.id);
             if (res.success) {
-                alert('Đã xóa người dùng thành công.');
+                toast.success('Đã xóa người dùng thành công.');
                 fetchUsers();
             }
         } catch (error) {
-            alert(error.message || 'Lỗi khi xóa người dùng.');
+            toast.error(error.message || 'Lỗi khi xóa người dùng.');
+        } finally {
+            closeDeleteConfirm();
         }
     };
 
@@ -54,7 +69,6 @@ const Users = () => {
         (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (user.identifyCard && user.identifyCard.includes(searchQuery))
     );
-
 
     const currentUsers = filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
@@ -138,7 +152,11 @@ const Users = () => {
                                                 Sửa
                                             </Link>
                                             {row.isAdmin !== 1 && (
-                                                <button className="action-btn delete-btn" title="Xóa" onClick={() => handleDelete(row.userId, row.fullName)}>
+                                                <button
+                                                    className="action-btn delete-btn"
+                                                    title="Xóa"
+                                                    onClick={() => openDeleteConfirm(row.userId, row.fullName)}
+                                                >
                                                     Xóa
                                                 </button>
                                             )}
@@ -159,6 +177,17 @@ const Users = () => {
                     onPageChange={setCurrentPage}
                 />
             </div>
+
+            <ConfirmModal
+                isOpen={confirmModal.isOpen}
+                toggle={closeDeleteConfirm}
+                title="Xóa người dùng"
+                message={`Bạn có chắc chắn muốn xóa người dùng: ${confirmModal.name}? Hành động này không thể hoàn tác.`}
+                onConfirm={handleDelete}
+                confirmText="Đồng ý xóa"
+                cancelText="Hủy bỏ"
+                variant="danger"
+            />
         </div>
     );
 };

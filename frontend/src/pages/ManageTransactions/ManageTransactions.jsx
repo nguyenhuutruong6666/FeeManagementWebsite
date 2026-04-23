@@ -4,11 +4,14 @@ import { formatDate } from '../../utils/formatters';
 import './ManageTransactions.scss';
 import { useToast } from '../../components/Common/ToastNotification';
 import Pagination from '../../components/Common/Pagination';
+import api from '../../services/api';
 
 const ManageTransactions = () => {
     const { user } = useAuthStore();
     const [transactions, setTransactions] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [filterStatus, setFilterStatus] = useState('');
     
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
@@ -16,21 +19,76 @@ const ManageTransactions = () => {
     const { toast } = useToast();
 
     useEffect(() => {
-
-        setTransactions([
-            { id: 1, transaction_code: 'TXN-ABC123XYZ', payer_name: 'Nguyễn Văn A', unit_title: 'K72E1', brand_title: 'Chi đoàn', period_label: 'Học kỳ', amount: 24000, payment_method: 'Tiền mặt', payment_date: '2024-05-15T10:30:00Z', status: 'Success' },
-            { id: 2, transaction_code: 'TXN-XYZ987', payer_name: 'Trần Thị B', unit_title: 'K72E1', brand_title: 'Chi đoàn', period_label: 'Học kỳ', amount: 24000, payment_method: 'VNPAY', payment_date: '2024-05-14T09:15:00Z', status: 'Pending' }
-        ]);
+        fetchTransactions();
     }, []);
+
+    const fetchTransactions = async () => {
+        try {
+            setLoading(true);
+            const params = {};
+            if (filterStatus) params.status = filterStatus;
+            if (search.trim()) params.search = search.trim();
+
+            const res = await api.get('/fee-payments', { params });
+            if (res.success) {
+                setTransactions(res.data);
+                setCurrentPage(1);
+            }
+        } catch (err) {
+            toast.error(err.message || 'Không thể tải danh sách giao dịch.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const isAdmin = user?.isAdmin === 1;
 
-    const handleUpdateStatus = (e, txnId) => {
+    const handleUpdateStatus = async (e, paymentId, newStatus) => {
         e.preventDefault();
-        toast.success(`Cập nhật trạng thái giao dịch ${txnId} thành công!`);
+        try {
+            // Nếu là xác nhận tiền mặt
+            if (newStatus === 'Success') {
+                const res = await api.post('/fee-payments/confirm-cash', { paymentId });
+                if (res.success) {
+                    toast.success(`Đã xác nhận giao dịch #${paymentId} thành công!`);
+                    fetchTransactions();
+                }
+            } else {
+                toast.info('Tính năng cập nhật trạng thái khác đang phát triển.');
+            }
+        } catch (err) {
+            toast.error(err.message || 'Cập nhật thất bại.');
+        }
+    };
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        fetchTransactions();
     };
 
     const currentTransactions = transactions.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+    const getStatusLabel = (status) => {
+        const map = {
+            'Success': 'Thành công',
+            'Pending': 'Chờ xử lý',
+            'Failed': 'Thất bại',
+            'VNPAY_Pending': 'Chờ VNPAY',
+            'Canceled': 'Đã hủy',
+        };
+        return map[status] || status;
+    };
+
+    const getStatusClass = (status) => {
+        const map = {
+            'Success': 'status-success',
+            'Pending': 'status-pending',
+            'Failed': 'status-failed',
+            'VNPAY_Pending': 'status-vnpay',
+            'Canceled': 'status-canceled',
+        };
+        return map[status] || '';
+    };
 
     return (
         <div className="container">
@@ -41,10 +99,37 @@ const ManageTransactions = () => {
             
             <div className="data-table-card">
                 <div className="search-toolbar">
-                    <form className="search-form" onSubmit={(e) => { e.preventDefault(); setCurrentPage(1); }}>
-                        <input type="text" className="search-input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Nhập mã giao dịch hoặc tên người nộp..." />
+                    <form className="search-form" onSubmit={handleSearch}>
+                        <input
+                            type="text"
+                            className="search-input"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Nhập mã giao dịch hoặc tên người nộp..."
+                        />
+                        <select
+                            className="status-filter"
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            style={{padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0'}}
+                        >
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="Pending">Chờ xử lý</option>
+                            <option value="Success">Thành công</option>
+                            <option value="VNPAY_Pending">Chờ VNPAY</option>
+                            <option value="Failed">Thất bại</option>
+                            <option value="Canceled">Đã hủy</option>
+                        </select>
                         <button type="submit" className="btn-search">Tìm kiếm</button>
-                        {search && <button type="button" className="btn-reset" onClick={() => { setSearch(''); setCurrentPage(1); }}>Đặt lại</button>}
+                        {(search || filterStatus) && (
+                            <button
+                                type="button"
+                                className="btn-reset"
+                                onClick={() => { setSearch(''); setFilterStatus(''); setTimeout(fetchTransactions, 50); }}
+                            >
+                                Đặt lại
+                            </button>
+                        )}
                     </form>
                 </div>
 
@@ -64,32 +149,37 @@ const ManageTransactions = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {currentTransactions.length > 0 ? currentTransactions.map(t => (
+                            {loading ? (
+                                <tr><td colSpan={isAdmin ? "9" : "8"} style={{textAlign: 'center', padding: '30px'}}>Đang tải dữ liệu...</td></tr>
+                            ) : currentTransactions.length > 0 ? currentTransactions.map(t => (
                                 <tr key={t.id}>
-                                    <td style={{fontWeight: '600', color: '#0ea5e9'}}>{t.transaction_code}</td>
-                                    <td>{t.payer_name}</td>
-                                    <td>{t.unit_title} ({t.brand_title})</td>
-                                    <td>{t.period_label}</td>
-                                    <td style={{fontWeight: '600', color: '#10b981'}}>{new Intl.NumberFormat('vi-VN').format(t.amount)} đ</td>
-                                    <td>{t.payment_method}</td>
-                                    <td>{formatDate(t.payment_date)}</td>
+                                    <td style={{fontWeight: '600', color: '#0ea5e9'}}>{t.transactionCode || `#${t.id}`}</td>
+                                    <td>{t.payer?.fullName || '---'}</td>
                                     <td>
-                                        <span className={`status-badge status-${t.status.toLowerCase().replace(' ', '')}`}>
-                                            {t.status === 'Success' ? 'Thành công' : t.status === 'Pending' ? 'Chờ xử lý' : t.status}
+                                        {t.payer?.unitBrand
+                                            ? `${t.payer.unitBrand.unit?.title} (${t.payer.unitBrand.brand?.title})`
+                                            : '---'}
+                                    </td>
+                                    <td>{t.obligation?.policy?.policyName || t.obligation?.policy?.cycle || '---'}</td>
+                                    <td style={{fontWeight: '600', color: '#10b981'}}>
+                                        {new Intl.NumberFormat('vi-VN').format(t.amount)} đ
+                                    </td>
+                                    <td>{t.paymentMethod || '---'}</td>
+                                    <td>{t.paymentDate ? formatDate(t.paymentDate) : '---'}</td>
+                                    <td>
+                                        <span className={`status-badge ${getStatusClass(t.status)}`}>
+                                            {getStatusLabel(t.status)}
                                         </span>
                                     </td>
                                     {isAdmin && (
                                         <td>
-                                            <form className="inline-form" onSubmit={(e) => handleUpdateStatus(e, t.transaction_code)}>
-                                                <select defaultValue={t.status} className="status-select">
-                                                    <option value="Pending">Chờ xử lý</option>
-                                                    <option value="Success">Thành công</option>
-                                                    <option value="Failed">Thất bại</option>
-                                                    <option value="Need review">Cần xem xét</option>
-                                                    <option value="Canceled">Hủy bỏ</option>
-                                                </select>
-                                                <button type="submit" className="btn-update">Lưu thay đổi</button>
-                                            </form>
+                                            {t.status === 'Pending' ? (
+                                                <form className="inline-form" onSubmit={(e) => handleUpdateStatus(e, t.id, 'Success')}>
+                                                    <button type="submit" className="btn-update">Xác nhận</button>
+                                                </form>
+                                            ) : (
+                                                <span style={{color: '#94a3b8', fontSize: '0.85rem'}}>—</span>
+                                            )}
                                         </td>
                                     )}
                                 </tr>
@@ -100,7 +190,7 @@ const ManageTransactions = () => {
                     </table>
                 </div>
 
-                {transactions.length > 0 && (
+                {!loading && transactions.length > 0 && (
                     <Pagination 
                         currentPage={currentPage}
                         totalItems={transactions.length}
